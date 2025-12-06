@@ -1,0 +1,6 @@
+@AutoWise.VehiclesCatalog.API_HostAddress = http://localhost:5197
+
+GET {{AutoWise.VehiclesCatalog.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
