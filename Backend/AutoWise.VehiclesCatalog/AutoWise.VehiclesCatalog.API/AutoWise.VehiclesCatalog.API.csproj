@@ -16,4 +16,10 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.11.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="AutoWise.CommonUtilities.MediatorAbstractions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.MediatorAbstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
