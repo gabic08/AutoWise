@@ -1,17 +1,17 @@
-﻿using MediatR;
+﻿using AutoWise.CommonUtilities.MediatorAbstractions.Cqrs.Commands;
 
 namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.AddVehicleSpecifications;
 
-public record AddVehicleSpecificationsCommand(string Vin) : IRequest<AddVehicleSpecificationsResult>;
+public record AddVehicleSpecificationsCommand(string Vin) : ICommand<AddVehicleSpecificationsResult>;
 
 public record AddVehicleSpecificationsResult(string Vin);
 
-public class AddVehicleSpecificationsCommandHandler : IRequestHandler<AddVehicleSpecificationsCommand, AddVehicleSpecificationsResult>
+public class AddVehicleSpecificationsCommandHandler : ICommandHandler<AddVehicleSpecificationsCommand, AddVehicleSpecificationsResult>
 {
-    public async Task<AddVehicleSpecificationsResult> Handle(AddVehicleSpecificationsCommand request, CancellationToken cancellationToken)
+    public async Task<AddVehicleSpecificationsResult> Handle(AddVehicleSpecificationsCommand command, CancellationToken cancellationToken)
     {
-        return request.Vin is null
-            ? throw new ArgumentNullException(nameof(request))
-            : await Task.FromResult(new AddVehicleSpecificationsResult(request.Vin));
+        return command.Vin is null
+            ? throw new ArgumentNullException(nameof(command))
+            : await Task.FromResult(new AddVehicleSpecificationsResult(command.Vin));
     }
 }
