@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Carter" Version="10.0.0" />
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
@@ -16,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="AutoWise.CommonUtilities.MediatorAbstractions">
-      <HintPath>..\Libraries\AutoWise.CommonUtilities.MediatorAbstractions.dll</HintPath>
+    <Reference Include="AutoWise.CommonUtilities.MediatRAbstractions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.MediatRAbstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
 
