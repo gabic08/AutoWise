@@ -1,4 +1,4 @@
-﻿using AutoWise.CommonUtilities.MediatorAbstractions.Cqrs.Commands;
+﻿using AutoWise.CommonUtilities.MediatRAbstractions.Cqrs.Commands;
 
 namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.AddVehicleSpecifications;
 
