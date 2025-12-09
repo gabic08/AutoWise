@@ -1,17 +1,28 @@
-﻿using AutoWise.CommonUtilities.MediatRAbstractions.Cqrs.Commands;
+﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.AddVehicleSpecifications;
 
-namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.AddVehicleSpecifications;
+public record AddVehicleSpecificationsCommand(string Vin, List<VehicleSpecification> Specifications) : ICommand<AddVehicleSpecificationsResult>;
+public record AddVehicleSpecificationsResult(Guid Id, string Vin);
 
-public record AddVehicleSpecificationsCommand(string Vin) : ICommand<AddVehicleSpecificationsResult>;
-
-public record AddVehicleSpecificationsResult(string Vin);
-
-public class AddVehicleSpecificationsCommandHandler : ICommandHandler<AddVehicleSpecificationsCommand, AddVehicleSpecificationsResult>
+public class AddVehicleSpecificationsCommandHandler (MongoDbService mongoDbService)
+    : ICommandHandler<AddVehicleSpecificationsCommand, AddVehicleSpecificationsResult>
 {
     public async Task<AddVehicleSpecificationsResult> Handle(AddVehicleSpecificationsCommand command, CancellationToken cancellationToken)
     {
-        return command.Vin is null
-            ? throw new ArgumentNullException(nameof(command))
-            : await Task.FromResult(new AddVehicleSpecificationsResult(command.Vin));
+        var vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
+
+        var newVehicle = new Vehicle
+        {
+            Id = Guid.NewGuid(),
+            Vin = command.Vin,
+            Specifications = [.. command.Specifications.Select(s => new VehicleSpecification
+            {
+                Label = s.Label,
+                Value = s.Value
+            })]
+        };
+
+        await vehiclesDbSet.InsertOneAsync(newVehicle, options: null, cancellationToken);
+
+        return new AddVehicleSpecificationsResult(Guid.NewGuid(), command.Vin);
     }
 }

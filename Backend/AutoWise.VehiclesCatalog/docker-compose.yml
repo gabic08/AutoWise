@@ -1,0 +1,6 @@
+services:
+  autowise.vehiclescatalog.api:
+    image: ${DOCKER_REGISTRY-}autowisevehiclescatalogapi
+    build:
+      context: .
+      dockerfile: AutoWise.VehiclesCatalog.API/Dockerfile

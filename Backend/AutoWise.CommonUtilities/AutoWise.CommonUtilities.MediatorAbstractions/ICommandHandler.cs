@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace AutoWise.CommonUtilities.MediatRAbstractions.Cqrs.Commands;
+namespace AutoWise.CommonUtilities.MediatRCqrsAbstractions;
 
 public interface ICommandHandler<in TCommand> : ICommandHandler<TCommand, Unit> where TCommand : ICommand<Unit>
 {
