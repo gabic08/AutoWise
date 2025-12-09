@@ -23,6 +23,6 @@ public class AddVehicleSpecificationsCommandHandler (MongoDbService mongoDbServi
 
         await vehiclesDbSet.InsertOneAsync(newVehicle, options: null, cancellationToken);
 
-        return new AddVehicleSpecificationsResult(Guid.NewGuid(), command.Vin);
+        return new AddVehicleSpecificationsResult(newVehicle.Id, command.Vin);
     }
 }
