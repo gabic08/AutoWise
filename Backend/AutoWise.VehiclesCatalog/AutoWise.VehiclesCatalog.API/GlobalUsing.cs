@@ -1,0 +1,9 @@
+﻿global using AutoWise.CommonUtilities.MediatRCqrsAbstractions;
+global using AutoWise.VehiclesCatalog.API.Infrastrucure;
+global using AutoWise.VehiclesCatalog.API.Models;
+global using Carter;
+global using MediatR;
+global using MongoDB.Bson;
+global using MongoDB.Bson.Serialization.Attributes;
+global using MongoDB.Driver;
+global using Scalar.AspNetCore;

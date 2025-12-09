@@ -1,3 +1,6 @@
 <Solution>
   <Project Path="AutoWise.VehiclesCatalog.API/AutoWise.VehiclesCatalog.API.csproj" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>
