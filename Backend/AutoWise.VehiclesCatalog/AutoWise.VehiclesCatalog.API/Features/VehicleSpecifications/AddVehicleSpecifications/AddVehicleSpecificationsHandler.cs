@@ -1,10 +1,9 @@
 ﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.AddVehicleSpecifications;
 
-public record AddVehicleSpecificationsCommand(string Vin, List<VehicleSpecification> Specifications) : ICommand<AddVehicleSpecificationsResult>;
+public record AddVehicleSpecificationsCommand(string Vin, IEnumerable<VehicleSpecification> Specifications) : ICommand<AddVehicleSpecificationsResult>;
 public record AddVehicleSpecificationsResult(Guid Id, string Vin);
 
-public class AddVehicleSpecificationsCommandHandler (MongoDbService mongoDbService)
-    : ICommandHandler<AddVehicleSpecificationsCommand, AddVehicleSpecificationsResult>
+public class AddVehicleSpecificationsCommandHandler (MongoDbService mongoDbService) : ICommandHandler<AddVehicleSpecificationsCommand, AddVehicleSpecificationsResult>
 {
     public async Task<AddVehicleSpecificationsResult> Handle(AddVehicleSpecificationsCommand command, CancellationToken cancellationToken)
     {
@@ -12,13 +11,12 @@ public class AddVehicleSpecificationsCommandHandler (MongoDbService mongoDbServi
 
         var newVehicle = new Vehicle
         {
-            Id = Guid.NewGuid(),
             Vin = command.Vin,
-            Specifications = [.. command.Specifications.Select(s => new VehicleSpecification
+            Specifications = command.Specifications.Select(s => new VehicleSpecification
             {
                 Label = s.Label,
                 Value = s.Value
-            })]
+            })
         };
 
         await vehiclesDbSet.InsertOneAsync(newVehicle, options: null, cancellationToken);

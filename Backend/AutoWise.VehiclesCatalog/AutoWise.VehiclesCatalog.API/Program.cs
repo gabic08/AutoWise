@@ -1,3 +1,6 @@
+using AutoWise.VehiclesCatalog.API.Infrastructure;
+using AutoWise.VehiclesCatalog.API.VehicleConfigurations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
@@ -6,13 +9,14 @@ builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(typeof(Program).Assembly);
 });
-builder.Services.AddSingleton<MongoDbService>();
 
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
 }
 
+builder.Services.AddSingleton<MongoDbService>();
+builder.Services.AddSingleton<GetVehicleSpecificationsConfig>();
 
 var app = builder.Build();
 

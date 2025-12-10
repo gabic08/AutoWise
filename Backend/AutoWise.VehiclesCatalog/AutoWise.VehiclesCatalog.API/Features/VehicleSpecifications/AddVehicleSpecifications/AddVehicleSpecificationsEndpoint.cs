@@ -1,6 +1,6 @@
 ﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.AddVehicleSpecifications;
 
-public record AddVehicleSpecificationsRequest(string Vin, List<VehicleSpecification> Specifications);
+public record AddVehicleSpecificationsRequest(string Vin, IEnumerable<VehicleSpecification> Specifications);
 public record AddVehicleSpecificationsResponse(Guid Id, string Vin);
 
 public class AddVehicleSpecificationsEndpoint : ICarterModule

@@ -1,4 +1,4 @@
-﻿namespace AutoWise.VehiclesCatalog.API.Infrastrucure;
+﻿namespace AutoWise.VehiclesCatalog.API.Infrastructure;
 
 public class MongoDbService
 {
