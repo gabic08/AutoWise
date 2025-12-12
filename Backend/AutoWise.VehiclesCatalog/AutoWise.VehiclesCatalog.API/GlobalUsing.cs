@@ -1,4 +1,5 @@
-﻿global using AutoWise.CommonUtilities.MediatRCqrsAbstractions;
+﻿global using AutoWise.CommonUtilities.ExtensionMethods;
+global using AutoWise.CommonUtilities.MediatRCqrsAbstractions;
 global using AutoWise.VehiclesCatalog.API.Infrastructure;
 global using AutoWise.VehiclesCatalog.API.Models;
 global using AutoWise.VehiclesCatalog.API.VehicleConfigurations;
@@ -8,4 +9,4 @@ global using MongoDB.Bson;
 global using MongoDB.Bson.Serialization.Attributes;
 global using MongoDB.Driver;
 global using Scalar.AspNetCore;
-
+global using System.Text.Json;

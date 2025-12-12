@@ -1,4 +1,6 @@
-﻿namespace AutoWise.VehiclesCatalog.API.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace AutoWise.VehiclesCatalog.API.Models;
 
 public class VehicleSpecification
 {

@@ -11,5 +11,5 @@ public class Vehicle
     public string Vin { get; set; }
 
     [BsonElement("_specifications")]
-    public IEnumerable<VehicleSpecification> Specifications { get; set; } = [];
+    public List<VehicleSpecification> Specifications { get; set; } = [];
 }

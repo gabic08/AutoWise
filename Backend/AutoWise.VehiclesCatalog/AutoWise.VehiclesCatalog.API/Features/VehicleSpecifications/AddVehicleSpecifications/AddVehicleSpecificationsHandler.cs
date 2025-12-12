@@ -12,11 +12,11 @@ public class AddVehicleSpecificationsCommandHandler (MongoDbService mongoDbServi
         var newVehicle = new Vehicle
         {
             Vin = command.Vin,
-            Specifications = command.Specifications.Select(s => new VehicleSpecification
+            Specifications = [.. command.Specifications.Select(s => new VehicleSpecification
             {
                 Label = s.Label,
                 Value = s.Value
-            })
+            })]
         };
 
         await vehiclesDbSet.InsertOneAsync(newVehicle, options: null, cancellationToken);
