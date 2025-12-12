@@ -1,4 +1,7 @@
-﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleIdentificationNumber.AddVin;
+﻿using AutoWise.CommonUtilities.Exceptions;
+using Nancy.Json;
+
+namespace AutoWise.VehiclesCatalog.API.Features.VehicleIdentificationNumber.AddVin;
 
 public record AddVinCommand(string Vin) : ICommand<AddVinResult>;
 public record AddVinResult(IEnumerable<VehicleSpecification> Specifications);
@@ -8,17 +11,19 @@ public class AddVinHandler : ICommandHandler<AddVinCommand, AddVinResult>
 {
     private readonly GetVehicleSpecificationsConfig _vehicleSpecificationsConfig;
     private readonly IMongoCollection<Vehicle> _vehiclesDbSet;
+    private readonly ILogger _logger;
 
     public AddVinHandler(GetVehicleSpecificationsConfig vehicleSpecificationsConfig, MongoDbService mongoDbService)
     {
         _vehicleSpecificationsConfig = vehicleSpecificationsConfig;
         _vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
+        //_logger = logger;
     }
 
     public async Task<AddVinResult> Handle(AddVinCommand command, CancellationToken cancellationToken)
     {
         var existingSpecifications = await GetExistingVehicleSpecificationsAsync(command.Vin, cancellationToken);
-        if (existingSpecifications is not null && existingSpecifications.Any())
+        if (existingSpecifications.NotNullOrEmpty())
         {
             return new AddVinResult(existingSpecifications);
         }
@@ -29,16 +34,8 @@ public class AddVinHandler : ICommandHandler<AddVinCommand, AddVinResult>
         return new AddVinResult(specifications);
     }
 
-    private async Task CreateNewVehicleSpecificationsAsync(string vin, IEnumerable<VehicleSpecification> specifications, CancellationToken cancellationToken)
-    {
-        var vehicle = new Vehicle
-        {
-            Vin = vin,
-            Specifications = specifications
-        };
 
-        await _vehiclesDbSet.InsertOneAsync(vehicle, options: null, cancellationToken);
-    }
+    #region Private Methods
 
     private async Task<IEnumerable<VehicleSpecification>> GetExistingVehicleSpecificationsAsync(string vin, CancellationToken cancellationToken)
     {
@@ -51,31 +48,58 @@ public class AddVinHandler : ICommandHandler<AddVinCommand, AddVinResult>
 
     private async Task<IEnumerable<VehicleSpecification>> FetchVehicleSpecificationsAsync(string vin, CancellationToken cancellationToken)
     {
-        using var client = new HttpClient();
         var getVehicleSpecificationUrl = _vehicleSpecificationsConfig.GetUrl(vin);
 
+        using var client = new HttpClient();
         var response = await client.GetAsync(getVehicleSpecificationUrl, cancellationToken);
+
         if (response.IsSuccessStatusCode)
         {
             var responseAsString = await response.Content.ReadAsStringAsync(cancellationToken);
-            return ParseStringSpecifications(responseAsString);
+            var specifications = GetSpecificationsFromStringResponse(responseAsString);
+
+            if (specifications.NotNullOrEmpty())
+            {
+                return specifications;
+            }
         }
-        else
-        {
-            throw new Exception("Failed to retrieve vehicle specifications from external service.");
-        }
+
+        throw new BadRequestException($"Failed to retrieve specifications for vehicle with VIN '{vin}'");
     }
 
-    public IEnumerable<VehicleSpecification> ParseStringSpecifications(dynamic result, string vin)
+    private static List<VehicleSpecification> GetSpecificationsFromStringResponse(string responseAsString)
     {
-        foreach (var item in result.Decode)
+        dynamic deserializedResult = new JavaScriptSerializer().DeserializeObject(responseAsString);
+
+        var specifications = new List<VehicleSpecification>();
+        foreach (var item in deserializedResult.Decode)
         {
-            if (!(item.Label is string || item.Label is int || item.Label is bool))
+            //if (item.Label is not string)
+            //{
+            //    continue;
+            //}
+            specifications.Add(new VehicleSpecification
             {
-                continue; // ignore non-string, not-int and non-bool values
-            }
-            decodeList.Add(new Specification
-            { Id = Guid.NewGuid(), Label = item.Label, Order = order++, Value = Convert.ToString(item.Value), Vin = vin });
+                Label = Convert.ToString(item.Label),
+                Value = Convert.ToString(item.Value)
+            });
         }
+
+        return specifications;
     }
+
+
+    private async Task CreateNewVehicleSpecificationsAsync(string vin, IEnumerable<VehicleSpecification> specifications, CancellationToken cancellationToken)
+    {
+        var vehicle = new Vehicle
+        {
+            Vin = vin,
+            Specifications = [.. specifications]
+        };
+
+        await _vehiclesDbSet.InsertOneAsync(vehicle, options: null, cancellationToken);
+    }
+
+    #endregion
+
 }

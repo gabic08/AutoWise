@@ -2,7 +2,7 @@
 
 namespace AutoWise.VehiclesCatalog.API.Features.VehicleIdentificationNumber.AddVin;
 
-public record AddVinRequest(string Vin, List<VehicleSpecification> Specifications);
+public record AddVinRequest(string Vin);
 public record AddVinResponse(IEnumerable<VehicleSpecification> Specifications);
 
 public class AddVinEndpoint : ICarterModule
@@ -11,16 +11,16 @@ public class AddVinEndpoint : ICarterModule
     {
         app.MapPost("vehicles-catalog/vin", async (AddVinRequest request, ISender sender) =>
         {
-            var result = await sender.Send(new AddVehicleSpecificationsCommand(request.Vin, request.Specifications));
+            var result = await sender.Send(new AddVinCommand(request.Vin));
 
-            var response = new AddVehicleSpecificationsResponse(result.Id, result.Vin);
+            var response = new AddVinResponse(result.Specifications);
 
-            return Results.Created($"/vehicle-specifications/{request.Vin}", response);
+            return Results.Created($"/vehicles-catalog/vin/{request.Vin}", response);
         })
-        .WithName("AddVehicleSpecifications")
+        .WithName("AddVin")
         .Produces<AddVehicleSpecificationsResponse>(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest)
-        .WithSummary("Add Vehicle Specifications")
-        .WithDescription("This endpoint allows you to add a JSON with vehicle specifications if you don't have to call a paid API fot that VIN");
+        .WithSummary("Import vehicle specifications")
+        .WithDescription("Import vehicle specifications by it's VIN");
     }
 }
