@@ -10,3 +10,5 @@ global using MongoDB.Bson.Serialization.Attributes;
 global using MongoDB.Driver;
 global using Scalar.AspNetCore;
 global using System.Text.Json;
+global using AutoWise.CommonUtilities.Exceptions;
+global using Nancy.Json;

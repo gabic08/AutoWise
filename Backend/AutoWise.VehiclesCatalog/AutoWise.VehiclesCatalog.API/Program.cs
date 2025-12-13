@@ -1,3 +1,4 @@
+using AutoWise.CommonUtilities.Exceptions.Middlewares;
 using AutoWise.VehiclesCatalog.API.Infrastructure;
 using AutoWise.VehiclesCatalog.API.VehicleConfigurations;
 
@@ -18,7 +19,10 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<GetVehicleSpecificationsConfig>();
 
+
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 app.MapCarter();
