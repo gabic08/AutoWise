@@ -1,11 +1,11 @@
 ﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.GetVehicleSpecifications;
 
-public record GetVehicleSpecificationsCommand(string Vin) : IQuery<GetVehicleSpecificationsResult>;
+public record GetVehicleSpecificationsQuery(string Vin) : IQuery<GetVehicleSpecificationsResult>;
 public record GetVehicleSpecificationsResult(IEnumerable<VehicleSpecification> Specifications);
 
-public class GetVehicleSpecificationsQueryHandler(MongoDbService mongoDbService) : IQueryHandler<GetVehicleSpecificationsCommand, GetVehicleSpecificationsResult>
+public class GetVehicleSpecificationsQueryHandler(MongoDbService mongoDbService) : IQueryHandler<GetVehicleSpecificationsQuery, GetVehicleSpecificationsResult>
 {
-    public async Task<GetVehicleSpecificationsResult> Handle(GetVehicleSpecificationsCommand query, CancellationToken cancellationToken)
+    public async Task<GetVehicleSpecificationsResult> Handle(GetVehicleSpecificationsQuery query, CancellationToken cancellationToken)
     {
         var vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
 

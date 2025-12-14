@@ -9,12 +9,12 @@ public class GetVehicleSpecificationsConfig(IConfiguration configuration)
 
     public string GetUrl(string vin)
     {
-        var controlSum = CalculateControlSum(vin, _vinDecoderSpecifications.Id, _vinDecoderSpecifications.ApiKey, _vinDecoderSpecifications.SecretKey);
+        var controlSum = CalculateControlSumParameter(vin, _vinDecoderSpecifications.Id, _vinDecoderSpecifications.ApiKey, _vinDecoderSpecifications.SecretKey);
         string url = $"{_vinDecoderSpecifications.ApiPrefix}/{_vinDecoderSpecifications.ApiKey}/{controlSum}/decode/{vin}.json";
         return url;
     }
 
-    private static string CalculateControlSum(string vin, string id, string apiKey, string secretKey)
+    private static string CalculateControlSumParameter(string vin, string id, string apiKey, string secretKey)
     {
         string input = $"{vin}|{id}|{apiKey}|{secretKey}";
         byte[] bytes = Encoding.UTF8.GetBytes(input);

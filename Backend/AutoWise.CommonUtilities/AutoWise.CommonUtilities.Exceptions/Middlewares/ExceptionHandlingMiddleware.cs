@@ -29,7 +29,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
 
             if (_logger.IsEnabled(LogLevel.Error))
             {
-                _logger.LogError("Request failed with Status Code '{statusCode}' and exception message '{exceptionMeesage}'", context.Response.StatusCode, ex.Message);
+                _logger.LogError("Request failed with Status Code '{statusCode}' and exception message '{exceptionMeesage}'", (int)httpStatusCode, ex.Message);
                 if (ex.InnerException != null)
                 {
                     _logger.LogError(ex.InnerException, "Inner exception occurred: {Message}", ex.InnerException.Message);

@@ -1,15 +1,17 @@
-using AutoWise.CommonUtilities.Exceptions.Middlewares;
-using AutoWise.VehiclesCatalog.API.Infrastructure;
-using AutoWise.VehiclesCatalog.API.VehicleConfigurations;
-
 var builder = WebApplication.CreateBuilder(args);
+
+var assembly = typeof(Program).Assembly;
+
+builder.Services.AddMediatR(config =>
+{
+    config.RegisterServicesFromAssembly(assembly);
+    config.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+});
+builder.Services.AddValidatorsFromAssembly(assembly);
+
 
 builder.Services.AddOpenApi();
 builder.Services.AddCarter();
-builder.Services.AddMediatR(config =>
-{
-    config.RegisterServicesFromAssembly(typeof(Program).Assembly);
-});
 
 if (builder.Environment.IsDevelopment())
 {
@@ -22,9 +24,8 @@ builder.Services.AddSingleton<GetVehicleSpecificationsConfig>();
 
 var app = builder.Build();
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+//app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// Configure the HTTP request pipeline.
 app.MapCarter();
 
 if (app.Environment.IsDevelopment())

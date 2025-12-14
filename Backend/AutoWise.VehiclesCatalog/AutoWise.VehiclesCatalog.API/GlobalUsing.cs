@@ -1,4 +1,5 @@
-﻿global using AutoWise.CommonUtilities.ExtensionMethods;
+﻿global using AutoWise.CommonUtilities.Exceptions;
+global using AutoWise.CommonUtilities.ExtensionMethods;
 global using AutoWise.CommonUtilities.MediatRCqrsAbstractions;
 global using AutoWise.VehiclesCatalog.API.Infrastructure;
 global using AutoWise.VehiclesCatalog.API.Models;
@@ -8,7 +9,8 @@ global using MediatR;
 global using MongoDB.Bson;
 global using MongoDB.Bson.Serialization.Attributes;
 global using MongoDB.Driver;
+global using Nancy.Json;
 global using Scalar.AspNetCore;
 global using System.Text.Json;
-global using AutoWise.CommonUtilities.Exceptions;
-global using Nancy.Json;
+global using AutoWise.CommonUtilities.MediatRCqrsValidations;
+global using FluentValidation;
