@@ -1,10 +1,10 @@
 ﻿using AutoWise.CommonUtilities.Exceptions;
-using AutoWise.CommonUtilities.MediatRCqrsAbstractions;
+using AutoWise.CommonUtilities.Mediator.CqrsAbstractions;
 using FluentValidation;
 using MediatR;
 using System.Text.Json;
 
-namespace AutoWise.CommonUtilities.MediatRCqrsFluentValidations;
+namespace AutoWise.CommonUtilities.Mediator.PipelineBehaviours;
 
 public class ValidationBehaviour<TRequest, TResponse> (IEnumerable<IValidator<TRequest>> validators) : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand<TResponse>
 {

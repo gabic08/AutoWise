@@ -1,6 +1,5 @@
 <Solution>
   <Project Path="AutoWise.CommonUtilities.Exceptions/AutoWise.CommonUtilities.Exceptions.csproj" Id="7a27cd49-5c28-4cb9-a400-8111c5f4b743" />
   <Project Path="AutoWise.CommonUtilities.ExtensionMethods/AutoWise.CommonUtilities.ExtensionMethods.csproj" Id="13c71c50-0032-4143-b62b-e2c47afa46a1" />
-  <Project Path="AutoWise.CommonUtilities.MediatRCqrsAbstractions/AutoWise.CommonUtilities.MediatRCqrsAbstractions.csproj" />
-  <Project Path="AutoWise.CommonUtilities.MediatRCqrsFluentValidations/AutoWise.CommonUtilities.MediatRCqrsFluentValidations.csproj" />
+  <Project Path="AutoWise.CommonUtilities.Mediator/AutoWise.CommonUtilities.Mediator.csproj" Id="3d79a35a-4af2-43cf-a0de-1d21702faed0" />
 </Solution>

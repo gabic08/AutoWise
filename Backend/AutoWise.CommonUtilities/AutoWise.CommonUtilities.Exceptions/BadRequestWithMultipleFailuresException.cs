@@ -6,7 +6,7 @@ public class BadRequestWithMultipleFailuresException : Exception
     {
     }
 
-    public BadRequestWithMultipleFailuresException(string message, Exception? innerException) : base(message, innerException)
+    public BadRequestWithMultipleFailuresException(string message, Exception innerException) : base(message, innerException)
     {
     }
 }

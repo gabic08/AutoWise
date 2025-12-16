@@ -4,27 +4,28 @@ public class ImportVehicleSpecificationsCommandHandler : ICommandHandler<ImportV
 {
     private readonly GetVehicleSpecificationsConfig _vehicleSpecificationsConfig;
     private readonly IMongoCollection<Vehicle> _vehiclesDbSet;
-    private readonly ILogger _logger;
+    private readonly ILogger<ImportVehicleSpecificationsCommandHandler> _logger;
 
-    public ImportVehicleSpecificationsCommandHandler(GetVehicleSpecificationsConfig vehicleSpecificationsConfig, MongoDbService mongoDbService)
+    public ImportVehicleSpecificationsCommandHandler(GetVehicleSpecificationsConfig vehicleSpecificationsConfig, MongoDbService mongoDbService, ILogger<ImportVehicleSpecificationsCommandHandler> logger)
     {
         _vehicleSpecificationsConfig = vehicleSpecificationsConfig;
         _vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
-        //_logger = logger;
+
+        _logger = logger;
     }
 
     public async Task<ImportVehicleSpecificationsResult> Handle(ImportVehicleSpecificationsCommand command, CancellationToken cancellationToken)
     {
         var existingSpecifications = await GetExistingVehicleSpecificationsAsync(command.Vin, cancellationToken);
-        if (existingSpecifications.NotNullOrEmpty())
+        if (VehicleSpecificationsAreAlreadyImported(existingSpecifications))
         {
             return new ImportVehicleSpecificationsResult(existingSpecifications);
         }
 
-        var specifications = await FetchVehicleSpecificationsAsync(command.Vin, cancellationToken);
-        await CreateNewVehicleSpecificationsAsync(command.Vin, specifications, cancellationToken);
+        var specificationsToImport = await FetchVehicleSpecificationsAsync(command.Vin, cancellationToken);
+        await SaveNewVehicleSpecificationsAsync(command.Vin, specificationsToImport, cancellationToken);
 
-        return new ImportVehicleSpecificationsResult(specifications);
+        return new ImportVehicleSpecificationsResult(specificationsToImport);
     }
 
 
@@ -37,6 +38,11 @@ public class ImportVehicleSpecificationsCommandHandler : ICommandHandler<ImportV
             .Project(v => v.Specifications)
             .FirstOrDefaultAsync(cancellationToken);
     }
+    
+    private static bool VehicleSpecificationsAreAlreadyImported(IEnumerable<VehicleSpecification> existingSpecifications)
+    {
+        return existingSpecifications.NotNullOrEmpty();
+    }
 
     private async Task<IEnumerable<VehicleSpecification>> FetchVehicleSpecificationsAsync(string vin, CancellationToken cancellationToken)
     {
@@ -45,17 +51,21 @@ public class ImportVehicleSpecificationsCommandHandler : ICommandHandler<ImportV
         using var client = new HttpClient();
         var response = await client.GetAsync(getVehicleSpecificationUrl, cancellationToken);
 
+
         if (response.IsSuccessStatusCode)
         {
             var responseAsString = await response.Content.ReadAsStringAsync(cancellationToken);
-            var specifications = GetSpecificationsFromStringResponse(responseAsString);
 
+            _logger.LogInformationMessage("Fetched vehicle specifications for VIN '{Vin}': {Response}", vin, responseAsString);
+
+            var specifications = GetSpecificationsFromStringResponse(responseAsString);
             if (specifications.NotNullOrEmpty())
             {
                 return specifications;
             }
         }
 
+        _logger.LogErrorMessage("Failed to fetch vehicle specifications for VIN '{Vin}'. {ErrMsg}", vin, response.ReasonPhrase);
         throw new BadRequestException($"Failed to retrieve specifications for vehicle with VIN '{vin}'");
     }
 
@@ -81,7 +91,7 @@ public class ImportVehicleSpecificationsCommandHandler : ICommandHandler<ImportV
     }
 
 
-    private async Task CreateNewVehicleSpecificationsAsync(string vin, IEnumerable<VehicleSpecification> specifications, CancellationToken cancellationToken)
+    private async Task SaveNewVehicleSpecificationsAsync(string vin, IEnumerable<VehicleSpecification> specifications, CancellationToken cancellationToken)
     {
         var vehicle = new Vehicle
         {

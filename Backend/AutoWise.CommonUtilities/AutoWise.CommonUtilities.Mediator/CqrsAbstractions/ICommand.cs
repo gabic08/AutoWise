@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace AutoWise.CommonUtilities.MediatRCqrsAbstractions;
+namespace AutoWise.CommonUtilities.Mediator.CqrsAbstractions;
 
 // Unit is a MediatR placeholder return type used when the command doesn't return a value
 public interface ICommand : ICommand<Unit>;

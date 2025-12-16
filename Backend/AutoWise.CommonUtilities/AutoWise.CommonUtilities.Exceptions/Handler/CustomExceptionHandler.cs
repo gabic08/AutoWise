@@ -40,7 +40,7 @@ public class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger) : IE
             ErrorMessages = errorMessages,
             StatusCode = (int)httpStatusCode,
             TraceId = httpContext.TraceIdentifier,
-            Instance = httpContext.Request.Path.Value
+            Instance = httpContext.Request.Path
         };
 
         await httpContext.Response.WriteAsJsonAsync(errorResponse, cancellationToken);
