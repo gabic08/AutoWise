@@ -1,0 +1,17 @@
+- CommonUtilities
+- VehiclesCatalog
+- UserVehicles
+- Areas
+- AutoService
+- Appointments
+
+- ServiceVehicles ?
+
+- VehicleTasks
+- VehiclesServiceHistory
+- Notifications
+- Files
+- IDP
+
+
+....

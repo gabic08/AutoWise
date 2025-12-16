@@ -1,6 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
-
 var assembly = typeof(Program).Assembly;
+
+// Add services to the container.
 
 builder.Services.AddMediatR(config =>
 {
@@ -21,12 +22,15 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<GetVehicleSpecificationsConfig>();
 
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
+
 
 var app = builder.Build();
 
-//app.UseMiddleware<ExceptionHandlingMiddleware>();
-
 app.MapCarter();
+
+app.UseExceptionHandler(options => { });
 
 if (app.Environment.IsDevelopment())
 {

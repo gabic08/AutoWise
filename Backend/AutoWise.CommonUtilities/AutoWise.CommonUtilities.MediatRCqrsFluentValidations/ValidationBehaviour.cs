@@ -1,8 +1,10 @@
-﻿using AutoWise.CommonUtilities.MediatRCqrsAbstractions;
+﻿using AutoWise.CommonUtilities.Exceptions;
+using AutoWise.CommonUtilities.MediatRCqrsAbstractions;
 using FluentValidation;
 using MediatR;
+using System.Text.Json;
 
-namespace AutoWise.CommonUtilities.MediatRCqrsValidations;
+namespace AutoWise.CommonUtilities.MediatRCqrsFluentValidations;
 
 public class ValidationBehaviour<TRequest, TResponse> (IEnumerable<IValidator<TRequest>> validators) : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand<TResponse>
 {
@@ -12,11 +14,18 @@ public class ValidationBehaviour<TRequest, TResponse> (IEnumerable<IValidator<TR
 
         var validationResults = await Task.WhenAll(validators.Select(v => v.ValidateAsync(context, cancellationToken)));
 
-        var failures = validationResults.Where(vr => vr.Errors.Count > 0).SelectMany(r => r.Errors).ToList();
+        var failures = validationResults
+            .SelectMany(v => v.ToDictionary())
+            .GroupBy(kvp => kvp.Key)
+            .ToDictionary(
+                g => g.Key,
+                g => g.SelectMany(x => x.Value).ToArray()
+            );
 
         if (failures.Count > 0)
         {
-            throw new ValidationException(failures);
+            string jsonResult = JsonSerializer.Serialize(failures);
+            throw new BadRequestWithMultipleFailuresException(jsonResult);
         }
 
         return await next(cancellationToken);

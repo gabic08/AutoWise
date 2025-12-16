@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AutoWise.CommonUtilities.Exceptions\AutoWise.CommonUtilities.Exceptions.csproj" />
     <ProjectReference Include="..\AutoWise.CommonUtilities.MediatRCqrsAbstractions\AutoWise.CommonUtilities.MediatRCqrsAbstractions.csproj" />
   </ItemGroup>
 

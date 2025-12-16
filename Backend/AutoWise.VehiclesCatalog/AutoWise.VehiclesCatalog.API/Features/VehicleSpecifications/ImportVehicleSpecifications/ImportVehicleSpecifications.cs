@@ -1,0 +1,4 @@
+﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.ImportVehicleSpecifications;
+
+public record ImportVehicleSpecificationsCommand(string Vin) : ICommand<ImportVehicleSpecificationsResult>;
+public record ImportVehicleSpecificationsResult(IEnumerable<VehicleSpecification> Specifications);

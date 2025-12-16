@@ -1,12 +1,15 @@
 ﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.GetVehicleSpecifications;
 
-public record GetVehicleSpecificationsQuery(string Vin) : IQuery<GetVehicleSpecificationsResult>;
-public record GetVehicleSpecificationsResult(IEnumerable<VehicleSpecification> Specifications);
-
 public class GetVehicleSpecificationsQueryHandler(MongoDbService mongoDbService) : IQueryHandler<GetVehicleSpecificationsQuery, GetVehicleSpecificationsResult>
 {
     public async Task<GetVehicleSpecificationsResult> Handle(GetVehicleSpecificationsQuery query, CancellationToken cancellationToken)
     {
+        var vehicleNotFoundErrMsg = $"Vehicle with VIN '{query.Vin}' not found.";
+        if (query.Vin?.Length != 17)
+        {
+            throw new NotFoundException(vehicleNotFoundErrMsg);
+        }
+
         var vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
 
         var specifications = await vehiclesDbSet
@@ -16,7 +19,7 @@ public class GetVehicleSpecificationsQueryHandler(MongoDbService mongoDbService)
 
         if (specifications.NullOrEmpty())
         {
-            throw new NotFoundException($"Vehicle with VIN '{query.Vin}' not found.");
+            throw new NotFoundException(vehicleNotFoundErrMsg);
         }
 
         return new GetVehicleSpecificationsResult(specifications);

@@ -1,0 +1,4 @@
+﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.DeleteVehicleSpecifications;
+
+public record DeleteVehicleSpecificationsCommand(string Vin) : ICommand<DeleteVehicleSpecificationsResult>;
+public record DeleteVehicleSpecificationsResult(bool Success);

@@ -30,8 +30,8 @@
     <Reference Include="AutoWise.CommonUtilities.MediatRCqrsAbstractions">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.MediatRCqrsAbstractions.dll</HintPath>
     </Reference>
-    <Reference Include="AutoWise.CommonUtilities.MediatRCqrsValidations">
-      <HintPath>..\Libraries\AutoWise.CommonUtilities.MediatRCqrsValidations.dll</HintPath>
+    <Reference Include="AutoWise.CommonUtilities.MediatRCqrsFluentValidations">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.MediatRCqrsFluentValidations.dll</HintPath>
     </Reference>
   </ItemGroup>
 
