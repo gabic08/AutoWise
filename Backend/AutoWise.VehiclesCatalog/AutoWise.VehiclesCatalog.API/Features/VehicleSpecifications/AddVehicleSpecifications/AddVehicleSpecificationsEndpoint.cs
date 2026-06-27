@@ -9,10 +9,10 @@ public class AddVehicleSpecificationsEndpoint : ICarterModule
     {
         app.MapPost("vehicles-catalog/specifications", async (AddVehicleSpecificationsRequest request, ISender sender) =>
         {
-            var result = await sender.Send(new AddVehicleSpecificationsCommand(request.Vin, 
-                request.Specifications?.Select(s => new VehicleSpecification 
-                { 
-                    Label = s.Label.ToString(), 
+            var result = await sender.Send(new AddVehicleSpecificationsCommand(request.Vin,
+                request.Specifications?.Select(s => new VehicleSpecification
+                {
+                    Label = s.Label.ToString(),
                     Value = s.Value.ToString()
                 }) ?? []));
 

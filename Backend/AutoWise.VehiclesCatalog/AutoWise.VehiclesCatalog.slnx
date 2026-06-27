@@ -1,4 +1,3 @@
 <Solution>
   <Project Path="AutoWise.VehiclesCatalog.API/AutoWise.VehiclesCatalog.API.csproj" />
-  <Project Path="AutoWise.VehiclesCatalog.Grpc/AutoWise.VehiclesCatalog.Grpc.csproj" Id="7fccb3ef-eaef-4557-b338-853c008b430a" />
 </Solution>

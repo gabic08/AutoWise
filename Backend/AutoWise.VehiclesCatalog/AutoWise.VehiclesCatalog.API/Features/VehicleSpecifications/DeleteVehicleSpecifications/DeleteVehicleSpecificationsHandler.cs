@@ -1,6 +1,6 @@
 ﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.DeleteVehicleSpecifications;
 
-public class DeleteVehicleSpecificationsCommandHandler(MongoDbService mongoDbService, IDistributedCache cache) 
+public class DeleteVehicleSpecificationsCommandHandler(MongoDbService mongoDbService, IDistributedCache cache)
     : ICommandHandler<DeleteVehicleSpecificationsCommand, DeleteVehicleSpecificationsResult>
 {
     public async Task<DeleteVehicleSpecificationsResult> Handle(DeleteVehicleSpecificationsCommand command, CancellationToken cancellationToken)

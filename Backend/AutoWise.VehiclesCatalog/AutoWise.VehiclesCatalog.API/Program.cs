@@ -1,3 +1,6 @@
+using AutoWise.VehiclesCatalog.API.Configurations;
+using AutoWise.VehiclesCatalog.API.Grpc.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
 
@@ -19,6 +22,8 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>();
 }
 
+builder.Services.AddGrpc();
+
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<GetVehicleSpecificationsConfig>();
 
@@ -34,6 +39,8 @@ var app = builder.Build();
 app.MapCarter();
 
 app.UseExceptionHandler(options => { });
+
+app.MapGrpcService<VehicleSpecificationsService>();
 
 if (app.Environment.IsDevelopment())
 {

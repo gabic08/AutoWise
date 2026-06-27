@@ -38,7 +38,7 @@ public class ImportVehicleSpecificationsCommandHandler : ICommandHandler<ImportV
             .Project(v => v.Specifications)
             .FirstOrDefaultAsync(cancellationToken);
     }
-    
+
     private static bool VehicleSpecificationsAreAlreadyImported(IEnumerable<VehicleSpecification> existingSpecifications)
     {
         return existingSpecifications.NotNullOrEmpty();

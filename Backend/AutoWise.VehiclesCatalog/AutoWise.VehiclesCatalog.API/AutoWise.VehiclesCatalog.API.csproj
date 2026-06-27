@@ -10,13 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Grpc\Protos\vehiclespecifications.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Carter" Version="10.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
-    <PackageReference Include="MongoDB.Driver" Version="3.5.2" />
+    <PackageReference Include="MongoDB.Driver" Version="3.9.0" />
     <PackageReference Include="Nancy" Version="2.0.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.11.0" />
   </ItemGroup>
@@ -34,6 +39,10 @@
     <Reference Include="AutoWise.CommonUtilities.MediatRCqrsFluentValidations">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.MediatRCqrsFluentValidations.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Grpc\Protos\vehiclespecifications.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

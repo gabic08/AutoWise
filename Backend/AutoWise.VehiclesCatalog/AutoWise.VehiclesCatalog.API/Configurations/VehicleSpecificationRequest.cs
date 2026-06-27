@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace AutoWise.VehiclesCatalog.API.VehicleConfigurations;
+namespace AutoWise.VehiclesCatalog.API.Configurations;
 
 public class VehicleSpecificationRequest
 {

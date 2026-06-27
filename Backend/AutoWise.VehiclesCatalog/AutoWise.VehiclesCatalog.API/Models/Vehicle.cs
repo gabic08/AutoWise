@@ -1,4 +1,7 @@
-﻿namespace AutoWise.VehiclesCatalog.API.Models;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace AutoWise.VehiclesCatalog.API.Models;
 
 public class Vehicle
 {

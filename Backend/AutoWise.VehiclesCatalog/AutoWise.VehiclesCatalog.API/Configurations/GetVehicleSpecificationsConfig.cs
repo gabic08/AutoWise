@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace AutoWise.VehiclesCatalog.API.VehicleConfigurations;
+namespace AutoWise.VehiclesCatalog.API.Configurations;
 
 public class GetVehicleSpecificationsConfig(IConfiguration configuration)
 {

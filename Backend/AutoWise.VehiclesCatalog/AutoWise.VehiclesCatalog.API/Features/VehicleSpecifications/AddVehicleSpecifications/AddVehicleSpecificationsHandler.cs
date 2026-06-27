@@ -1,6 +1,6 @@
 ﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.AddVehicleSpecifications;
 
-public class AddVehicleSpecificationsCommandHandler (MongoDbService mongoDbService, IDistributedCache cache) 
+public class AddVehicleSpecificationsCommandHandler(MongoDbService mongoDbService, IDistributedCache cache)
     : ICommandHandler<AddVehicleSpecificationsCommand, AddVehicleSpecificationsResult>
 {
     public async Task<AddVehicleSpecificationsResult> Handle(AddVehicleSpecificationsCommand command, CancellationToken cancellationToken)

@@ -1,4 +1,4 @@
-﻿namespace AutoWise.VehiclesCatalog.API.VehicleConfigurations;
+﻿namespace AutoWise.VehiclesCatalog.API.Configurations;
 
 public class VinDecoderSpecifications
 {

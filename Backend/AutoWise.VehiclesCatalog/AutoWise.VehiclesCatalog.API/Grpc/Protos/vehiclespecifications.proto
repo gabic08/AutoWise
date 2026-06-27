@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option csharp_namespace = "AutoWise.VehiclesCatalog.API.Grpc";
+
+package vehiclespecifications;
+
+service VehicleSpecificationsProtoService {
+  rpc GetVehicleSpecifications (GetVehicleSpecificationsRequest) returns (GetVehicleSpecificationsResponseList);
+}
+
+message GetVehicleSpecificationsRequest {
+  string vin = 1;
+}
+
+message GetVehicleSpecificationsResponseList{
+	repeated GetVehicleSpecificationsResponse specifications = 1;
+}
+
+message GetVehicleSpecificationsResponse{
+	string Label = 1;
+	string Value = 2;
+}
