@@ -1,6 +1,4 @@
-﻿using AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.GetVehicleSpecifications;
-
-namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.DeleteVehicleSpecifications;
+﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.DeleteVehicleSpecifications;
 
 public record DeleteVehicleSpecificationsResponse(bool Success);
 
