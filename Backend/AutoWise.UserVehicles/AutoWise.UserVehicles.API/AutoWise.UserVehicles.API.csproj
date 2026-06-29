@@ -2,20 +2,42 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>162ab98d-350f-4d8a-ac83-a4a9c527062c</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.80.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.16.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AutoWise.CommonUtilities.Exceptions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.ExtensionMethods">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.ExtensionMethods.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Models">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Repository.Abstractions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Repository.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Repository.PostgreSQL">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Repository.PostgreSQL.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

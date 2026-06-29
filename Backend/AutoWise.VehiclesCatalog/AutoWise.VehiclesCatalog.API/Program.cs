@@ -1,6 +1,3 @@
-using AutoWise.VehiclesCatalog.API.Configurations;
-using AutoWise.VehiclesCatalog.API.Grpc.Services;
-
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
 

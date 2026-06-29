@@ -4,4 +4,5 @@
   <Project Path="AutoWise.CommonUtilities.ExtensionMethods/AutoWise.CommonUtilities.ExtensionMethods.csproj" Id="13c71c50-0032-4143-b62b-e2c47afa46a1" />
   <Project Path="AutoWise.CommonUtilities.Mediator/AutoWise.CommonUtilities.Mediator.csproj" Id="3d79a35a-4af2-43cf-a0de-1d21702faed0" />
   <Project Path="AutoWise.CommonUtilities.Repository.Abstractions/AutoWise.CommonUtilities.Repository.Abstractions.csproj" Id="cf207f64-69d5-42fc-a809-2d40a058bf49" />
+  <Project Path="AutoWise.CommonUtilities.Repository.PostgreSQL/AutoWise.CommonUtilities.Repository.PostgreSQL.csproj" Id="b312e581-b760-43ce-bd10-6a4e869504b6" />
 </Solution>

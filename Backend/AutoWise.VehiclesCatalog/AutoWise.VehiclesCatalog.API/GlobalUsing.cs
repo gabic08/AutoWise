@@ -5,6 +5,7 @@ global using AutoWise.CommonUtilities.MediatRCqrsAbstractions;
 global using AutoWise.CommonUtilities.MediatRCqrsFluentValidations;
 global using AutoWise.VehiclesCatalog.API.Configurations;
 global using AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.GetVehicleSpecifications;
+global using AutoWise.VehiclesCatalog.API.Grpc.Services;
 global using AutoWise.VehiclesCatalog.API.Infrastructure;
 global using AutoWise.VehiclesCatalog.API.Models;
 global using Carter;

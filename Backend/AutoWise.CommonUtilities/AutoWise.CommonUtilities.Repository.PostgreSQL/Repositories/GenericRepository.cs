@@ -1,0 +1,193 @@
+﻿using AutoWise.CommonUtilities.Models.BaseEntities.Interfaces;
+using AutoWise.CommonUtilities.Models.Enums;
+using AutoWise.CommonUtilities.Models.Queries;
+using AutoWise.CommonUtilities.Repository.Abstractions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
+
+namespace AutoWise.CommonUtilities.Repository.PostgreSQL.Repositories;
+
+public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepository<TEntity> where TEntity : class, IIdBaseEntity
+{
+    protected readonly DbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    protected readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
+
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> condition = null)
+    {
+        return condition is null ? await _dbSet.AnyAsync() : await _dbSet.AnyAsync(condition);
+    }
+
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> condition = null, bool distinct = false)
+    {
+        return condition is null ? await _dbSet.CountAsync() : await _dbSet.CountAsync(condition);
+    }
+
+    public async Task CreateAsync(TEntity entity)
+    {
+        await _dbSet.AddAsync(entity);
+    }
+
+    public async Task CreateAsync(IEnumerable<TEntity> entities)
+    {
+        if (entities != null && entities.Any())
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
+    }
+
+    public void Delete(TEntity entity)
+    {
+        _dbSet.Remove(entity);
+    }
+
+    public void Delete(IEnumerable<TEntity> entities)
+    {
+        if (entities != null && entities.Any())
+        {
+            _dbSet.RemoveRange(entities);
+        }
+    }
+
+    public async Task<int> ExecuteDeleteByConditionAsync(Expression<Func<TEntity, bool>> condition)
+    {
+        return await _dbSet.Where(condition).ExecuteDeleteAsync();
+    }
+
+    public async Task<int> ExecuteDeleteByIdAsync(Guid id)
+    {
+        return await _dbSet.Where(x => x.Id == id).ExecuteDeleteAsync();
+    }
+
+    public async Task<TResult> GetByConditionAsync<TResult>(Expression<Func<TEntity, bool>> condition,
+        Expression<Func<TEntity, TResult>> selectQuery = null,
+        List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>> includeQuery = null,
+        SortEntityParameters<TEntity> sort = null,
+        RecordPosition recordPosition = RecordPosition.First,
+        bool asNoTracking = true) where TResult : class
+    {
+        var query = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
+
+        if (includeQuery != null)
+        {
+            query = includeQuery.Aggregate(query, (current, include) => include(current));
+        }
+
+        if (condition != null)
+        {
+            query = query.Where(condition);
+        }
+
+        if (sort != null)
+        {
+            query = sort.SortOrder == SortOrder.ASC ? query.OrderBy(sort.SortByCondition) : query.OrderByDescending(sort.SortByCondition);
+        }
+
+        if (selectQuery != null)
+        {
+            return recordPosition == RecordPosition.First ? await query.Select(selectQuery).FirstOrDefaultAsync()
+                : await query.Select(selectQuery).LastOrDefaultAsync();
+        }
+        else
+        {
+            return recordPosition == RecordPosition.First ? await query.FirstOrDefaultAsync() as TResult
+                : await query.LastOrDefaultAsync() as TResult;
+        }
+    }
+
+
+    public async Task<TEntity> GetByIdAsync(Guid id, bool asNoTracking = true)
+    {
+        var query = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
+        return query.FirstOrDefault(e => e.Id == id);
+    }
+
+    public async Task<TResult> GetByIdAsync<TResult>(Guid id,
+        Expression<Func<TEntity, TResult>> selectQuery = null,
+        List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>> includeQuery = null,
+        SortEntityParameters<TEntity> sort = null,
+        bool asNoTracking = true) where TResult : class
+    {
+        return await GetByConditionAsync(e => e.Id == id, selectQuery, includeQuery, sort, RecordPosition.First, asNoTracking);
+    }
+
+
+    public async Task<QueryResponse<TResult>> GetByQueryOptionsAsync<TResult>(QueryOptions queryOptions,
+        Expression<Func<TEntity, bool>> condition = null,
+        Expression<Func<TEntity, TResult>> selectQuery = null,
+        List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>> includeQuery = null,
+        bool asNoTracking = true) where TResult : class
+    {
+        var pagedQueryResponse = (PagedQueryResponse)null;
+
+        var query = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
+
+        if (includeQuery != null)
+        {
+            query = includeQuery.Aggregate(query, (current, include) => include(current));
+        }
+
+        if (condition != null)
+        {
+            query = query.Where(condition);
+        }
+
+        if (queryOptions != null)
+        {
+            // TODO: Implement sorting and pagination logic based on queryOptions
+        }
+
+        if (selectQuery != null)
+        {
+            var projection = query.Select(selectQuery);
+            return new QueryResponse<TResult>(await projection.ToListAsync(), pagedQueryResponse);
+        }
+
+        return new QueryResponse<TResult>((ICollection<TResult>)await query.ToListAsync(), pagedQueryResponse);
+    }
+
+
+    public async Task<IEnumerable<TResult>> GetManyByConditionAsync<TResult>(Expression<Func<TEntity, bool>> condition,
+        Expression<Func<TEntity, TResult>> selectQuery,
+        List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>> includeQuery = null,
+        SortEntityParameters<TEntity> sort = null,
+        bool asNoTracking = true) where TResult : class
+    {
+        var query = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
+
+        if (includeQuery != null)
+        {
+            query = includeQuery.Aggregate(query, (current, include) => include(current));
+        }
+
+        if (condition != null)
+        {
+            query = query.Where(condition);
+        }
+
+        if (sort != null)
+        {
+            query = sort.SortOrder == SortOrder.ASC ? query.OrderBy(sort.SortByCondition) : query.OrderByDescending(sort.SortByCondition);
+        }
+
+        if (selectQuery != null)
+        {
+            return await query.Select(selectQuery).ToListAsync();
+        }
+
+        return (ICollection<TResult>)await query.ToListAsync();
+    }
+
+    public void Update(TEntity entity)
+    {
+        _dbSet.Update(entity);
+    }
+
+    public void Update(IEnumerable<TEntity> entities)
+    {
+        if (entities != null && entities.Any())
+        {
+            _dbSet.UpdateRange(entities);
+        }
+    }
+}
