@@ -1,0 +1,12 @@
+﻿global using AutoWise.CommonUtilities.Exceptions.Handler;
+global using AutoWise.CommonUtilities.Models.BaseEntities;
+global using AutoWise.CommonUtilities.Repository.Abstractions;
+global using AutoWise.CommonUtilities.Repository.PostgreSQL.Configurations;
+global using AutoWise.CommonUtilities.Repository.PostgreSQL.Context;
+global using AutoWise.CommonUtilities.Repository.PostgreSQL.Repositories;
+global using AutoWise.UserVehicles.API.Domain;
+global using AutoWise.UserVehicles.API.Persistence.Data;
+global using AutoWise.UserVehicles.API.Persistence.Repositories;
+global using AutoWise.UserVehicles.API.Persistence.RepositoryInterfaces;
+global using Microsoft.EntityFrameworkCore;
+global using Scalar.AspNetCore;

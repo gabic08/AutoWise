@@ -1,17 +1,18 @@
-using AutoWise.CommonUtilities.Exceptions.Handler;
-using AutoWise.UserVehicles.API.Persistence.Data;
-using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
+using AutoWise.UserVehicles.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.AddDbContext();
 
-builder.Services.AddDbContext<UserVehiclesDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")
-    ?? throw new InvalidOperationException("Connection string 'PostgreSQL' not found.")));
+builder.Services.AddScoped<IPersistenceContext, PersistenceContext<UserVehiclesDbContext>>((provider) =>
+{
+    var userVehiclesPersistenceContext = new PersistenceContext<UserVehiclesDbContext>(provider);
+    return userVehiclesPersistenceContext;
+});
 
+builder.Services.AddScoped<IUserVehicleRepository, UserVehicleRepository>();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -35,6 +36,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.ApplyMigrations();
 
 app.UseHttpsRedirection();
 

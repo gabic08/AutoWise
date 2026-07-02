@@ -1,11 +1,39 @@
-﻿using Grpc.Core;
+﻿using AutoWise.VehiclesCatalog.API.Utils;
+using Grpc.Core;
 
 namespace AutoWise.VehiclesCatalog.API.Grpc.Services;
 
-public class VehicleSpecificationsService : VehicleSpecificationsProtoService.VehicleSpecificationsProtoServiceBase
+public class VehicleSpecificationsService(GetVehicleSpecificationsConfig vehicleSpecificationsConfig, MongoDbService mongoDbService, IDistributedCache cache, ILogger<VehicleSpecificationsService> logger)
+    : VehicleSpecificationsProtoService.VehicleSpecificationsProtoServiceBase
 {
-    public override Task<GetVehicleSpecificationsResponseList> GetVehicleSpecifications(GetVehicleSpecificationsRequest request, ServerCallContext context)
+    public override async Task<GetVehicleSpecificationsResponseList> GetVehicleSpecifications(GetVehicleSpecificationsRequest request, ServerCallContext context)
     {
-        return base.GetVehicleSpecifications(request, context);
+        var vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
+        var response = new GetVehicleSpecificationsResponseList();
+
+
+        var existingSpecifications = await ImportVehicleSpecificationsUtils.GetExistingVehicleSpecificationsAsync(request.Vin, vehiclesDbSet, cache);
+        if (ImportVehicleSpecificationsUtils.VehicleSpecificationsAreAlreadyImported(existingSpecifications))
+        {
+            response.Specifications.AddRange(existingSpecifications.Select(s => new GetVehicleSpecificationsResponse
+            {
+                Label = s.Label,
+                Value = s.Value
+            }));
+
+            return response;
+        }
+
+        var specificationsToImport = await ImportVehicleSpecificationsUtils.FetchVehicleSpecificationsAsync(request.Vin, vehicleSpecificationsConfig, logger);
+        await ImportVehicleSpecificationsUtils.SaveNewVehicleSpecificationsAsync(request.Vin, specificationsToImport, vehiclesDbSet);
+
+        await cache.SetStringAsync(request.Vin, JsonSerializer.Serialize(specificationsToImport));
+
+        response.Specifications.AddRange(specificationsToImport.Select(s => new GetVehicleSpecificationsResponse
+        {
+            Label = s.Label,
+            Value = s.Value
+        }));
+        return response;
     }
 }
