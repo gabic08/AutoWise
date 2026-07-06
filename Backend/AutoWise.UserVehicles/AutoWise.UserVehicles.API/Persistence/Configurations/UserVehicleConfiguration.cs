@@ -1,4 +1,6 @@
-﻿namespace AutoWise.UserVehicles.API.Persistence.Configurations;
+﻿using AutoWise.UserVehicles.Domain.Models;
+
+namespace AutoWise.UserVehicles.API.Persistence.Configurations;
 
 public class UserVehicleConfiguration : ModifiedCreatedAuditEntityConfiguration<UserVehicle>
 {
