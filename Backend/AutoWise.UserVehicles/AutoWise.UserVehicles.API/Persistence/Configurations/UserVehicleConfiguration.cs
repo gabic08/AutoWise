@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace AutoWise.UserVehicles.API.Persistence.Configurations;
+﻿namespace AutoWise.UserVehicles.API.Persistence.Configurations;
 
 public class UserVehicleConfiguration : ModifiedCreatedAuditEntityConfiguration<UserVehicle>
 {

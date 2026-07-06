@@ -11,11 +11,11 @@ public abstract class ModifiedCreatedAuditEntityConfiguration<TEntity> : Created
     {
         base.Configure(builder); // applies Id + CreatedAudit configuration
 
-        builder.Property(x => x.ModifiedOn)
+        builder.Property(x => x.LastModifiedOn)
             .HasColumnType("timestamp with time zone")
             .IsRequired(false);
 
-        builder.Property(x => x.ModifiedByUserId)
+        builder.Property(x => x.LastModifiedByUserId)
             .IsRequired(false);
     }
 }
@@ -33,9 +33,9 @@ public abstract class ModifiedCreatedAuditEntityConfiguration<TEntity, TUser> : 
             .HasForeignKey(x => x.CreatedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.ModifiedByUser)
+        builder.HasOne(x => x.LastModifiedByUser)
             .WithMany()
-            .HasForeignKey(x => x.ModifiedByUserId)
+            .HasForeignKey(x => x.LastModifiedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

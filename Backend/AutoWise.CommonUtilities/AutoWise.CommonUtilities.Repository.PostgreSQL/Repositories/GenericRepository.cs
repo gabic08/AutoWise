@@ -13,26 +13,26 @@ public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepositor
     protected readonly DbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     protected readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
 
-    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> condition = null)
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> condition = null, CancellationToken cancellationToken = default)
     {
-        return condition is null ? await _dbSet.AnyAsync() : await _dbSet.AnyAsync(condition);
+        return condition is null ? await _dbSet.AnyAsync() : await _dbSet.AnyAsync(condition, cancellationToken);
     }
 
-    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> condition = null, bool distinct = false)
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> condition = null, CancellationToken cancellationToken = default)
     {
-        return condition is null ? await _dbSet.CountAsync() : await _dbSet.CountAsync(condition);
+        return condition is null ? await _dbSet.CountAsync(cancellationToken) : await _dbSet.CountAsync(condition, cancellationToken);
     }
 
-    public async Task CreateAsync(TEntity entity)
+    public async Task CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        await _dbSet.AddAsync(entity);
+        await _dbSet.AddAsync(entity, cancellationToken);
     }
 
-    public async Task CreateAsync(IEnumerable<TEntity> entities)
+    public async Task CreateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
         if (entities != null && entities.Any())
         {
-            await _dbSet.AddRangeAsync(entities);
+            await _dbSet.AddRangeAsync(entities, cancellationToken);
         }
     }
 
@@ -49,14 +49,14 @@ public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepositor
         }
     }
 
-    public async Task<int> ExecuteDeleteByConditionAsync(Expression<Func<TEntity, bool>> condition)
+    public async Task<int> ExecuteDeleteByConditionAsync(Expression<Func<TEntity, bool>> condition, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Where(condition).ExecuteDeleteAsync();
+        return await _dbSet.Where(condition).ExecuteDeleteAsync(cancellationToken);
     }
 
-    public async Task<int> ExecuteDeleteByIdAsync(Guid id)
+    public async Task<int> ExecuteDeleteByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Where(x => x.Id == id).ExecuteDeleteAsync();
+        return await _dbSet.Where(x => x.Id == id).ExecuteDeleteAsync(cancellationToken);
     }
 
     public async Task<TResult> GetByConditionAsync<TResult>(Expression<Func<TEntity, bool>> condition,
@@ -64,7 +64,7 @@ public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepositor
         List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>> includeQuery = null,
         SortEntityParameters<TEntity> sort = null,
         RecordPosition recordPosition = RecordPosition.First,
-        bool asNoTracking = true) where TResult : class
+        bool asNoTracking = true, CancellationToken cancellationToken = default) where TResult : class
     {
         var query = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
 
@@ -85,30 +85,30 @@ public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepositor
 
         if (selectQuery != null)
         {
-            return recordPosition == RecordPosition.First ? await query.Select(selectQuery).FirstOrDefaultAsync()
-                : await query.Select(selectQuery).LastOrDefaultAsync();
+            return recordPosition == RecordPosition.First ? await query.Select(selectQuery).FirstOrDefaultAsync(cancellationToken)
+                : await query.Select(selectQuery).LastOrDefaultAsync(cancellationToken);
         }
         else
         {
-            return recordPosition == RecordPosition.First ? await query.FirstOrDefaultAsync() as TResult
-                : await query.LastOrDefaultAsync() as TResult;
+            return recordPosition == RecordPosition.First ? await query.FirstOrDefaultAsync(cancellationToken) as TResult
+                : await query.LastOrDefaultAsync(cancellationToken) as TResult;
         }
     }
 
 
-    public async Task<TEntity> GetByIdAsync(Guid id, bool asNoTracking = true)
+    public async Task<TEntity> GetByIdAsync(Guid id, bool asNoTracking = true, CancellationToken cancellationToken = default)
     {
         var query = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
-        return query.FirstOrDefault(e => e.Id == id);
+        return await query.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
 
     public async Task<TResult> GetByIdAsync<TResult>(Guid id,
         Expression<Func<TEntity, TResult>> selectQuery = null,
         List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>> includeQuery = null,
         SortEntityParameters<TEntity> sort = null,
-        bool asNoTracking = true) where TResult : class
+        bool asNoTracking = true, CancellationToken cancellationToken = default) where TResult : class
     {
-        return await GetByConditionAsync(e => e.Id == id, selectQuery, includeQuery, sort, RecordPosition.First, asNoTracking);
+        return await GetByConditionAsync(e => e.Id == id, selectQuery, includeQuery, sort, RecordPosition.First, asNoTracking, cancellationToken);
     }
 
 
@@ -116,7 +116,7 @@ public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepositor
         Expression<Func<TEntity, bool>> condition = null,
         Expression<Func<TEntity, TResult>> selectQuery = null,
         List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>> includeQuery = null,
-        bool asNoTracking = true) where TResult : class
+        bool asNoTracking = true, CancellationToken cancellationToken = default) where TResult : class
     {
         var pagedQueryResponse = (PagedQueryResponse)null;
 
@@ -140,10 +140,10 @@ public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepositor
         if (selectQuery != null)
         {
             var projection = query.Select(selectQuery);
-            return new QueryResponse<TResult>(await projection.ToListAsync(), pagedQueryResponse);
+            return new QueryResponse<TResult>(await projection.ToListAsync(cancellationToken), pagedQueryResponse);
         }
 
-        return new QueryResponse<TResult>((ICollection<TResult>)await query.ToListAsync(), pagedQueryResponse);
+        return new QueryResponse<TResult>((ICollection<TResult>)await query.ToListAsync(cancellationToken), pagedQueryResponse);
     }
 
 
@@ -151,7 +151,7 @@ public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepositor
         Expression<Func<TEntity, TResult>> selectQuery,
         List<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>> includeQuery = null,
         SortEntityParameters<TEntity> sort = null,
-        bool asNoTracking = true) where TResult : class
+        bool asNoTracking = true, CancellationToken cancellationToken = default) where TResult : class
     {
         var query = asNoTracking ? _dbSet.AsNoTracking() : _dbSet;
 
@@ -172,10 +172,10 @@ public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepositor
 
         if (selectQuery != null)
         {
-            return await query.Select(selectQuery).ToListAsync();
+            return await query.Select(selectQuery).ToListAsync(cancellationToken);
         }
 
-        return (ICollection<TResult>)await query.ToListAsync();
+        return (ICollection<TResult>)await query.ToListAsync(cancellationToken);
     }
 
     public void Update(TEntity entity)

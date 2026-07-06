@@ -1,6 +1,6 @@
 ﻿namespace AutoWise.VehiclesCatalog.API.Features.VehicleSpecifications.AddVehicleSpecifications;
 
-public class AddVehicleSpecificationsCommandHandler(MongoDbService mongoDbService, IDistributedCache cache)
+public class AddVehicleSpecificationsCommandHandler(MongoDbService mongoDbService)
     : ICommandHandler<AddVehicleSpecificationsCommand, AddVehicleSpecificationsResult>
 {
     public async Task<AddVehicleSpecificationsResult> Handle(AddVehicleSpecificationsCommand command, CancellationToken cancellationToken)
@@ -20,8 +20,6 @@ public class AddVehicleSpecificationsCommandHandler(MongoDbService mongoDbServic
         };
 
         await vehiclesDbSet.InsertOneAsync(newVehicle, options: null, cancellationToken);
-
-        await cache.SetStringAsync(command.Vin, JsonSerializer.Serialize(newVehicleSpecifications), cancellationToken);
 
         return new AddVehicleSpecificationsResult(newVehicle.Id, command.Vin);
     }

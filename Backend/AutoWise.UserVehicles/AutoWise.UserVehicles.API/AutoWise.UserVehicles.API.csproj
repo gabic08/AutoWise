@@ -23,6 +23,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AutoWise.UserVehicles.Application\AutoWise.UserVehicles.Application.csproj" />
+    <ProjectReference Include="..\AutoWise.UserVehicles.Infrastructure\AutoWise.UserVehicles.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\..\AutoWise.VehiclesCatalog\AutoWise.VehiclesCatalog.API\Grpc\Protos\vehiclespecifications.proto" GrpcServices="Client">
+      <Link>Protos\vehiclespecifications.proto</Link>
+    </Protobuf>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="AutoWise.CommonUtilities.Exceptions">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
     </Reference>
@@ -38,10 +49,6 @@
     <Reference Include="AutoWise.CommonUtilities.Repository.PostgreSQL">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Repository.PostgreSQL.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-namespace AutoWise.CommonUtilities.Repository.PostgreSQL.Configurations;
+namespace AutoWise.CommonUtilities.Repository.PostgreSQL.Context;
 
 public static class DbContextConfiguration
 {

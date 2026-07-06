@@ -1,9 +1,10 @@
-﻿using AutoWise.VehiclesCatalog.API.Utils;
+﻿
+using AutoWise.VehiclesCatalog.API.Utils;
 using Grpc.Core;
 
 namespace AutoWise.VehiclesCatalog.API.Grpc.Services;
 
-public class VehicleSpecificationsService(GetVehicleSpecificationsConfig vehicleSpecificationsConfig, MongoDbService mongoDbService, IDistributedCache cache, ILogger<VehicleSpecificationsService> logger)
+public class VehicleSpecificationsService(GetVehicleSpecificationsConfig vehicleSpecificationsConfig, MongoDbService mongoDbService, ILogger<VehicleSpecificationsService> logger)
     : VehicleSpecificationsProtoService.VehicleSpecificationsProtoServiceBase
 {
     public override async Task<GetVehicleSpecificationsResponseList> GetVehicleSpecifications(GetVehicleSpecificationsRequest request, ServerCallContext context)
@@ -12,7 +13,7 @@ public class VehicleSpecificationsService(GetVehicleSpecificationsConfig vehicle
         var response = new GetVehicleSpecificationsResponseList();
 
 
-        var existingSpecifications = await ImportVehicleSpecificationsUtils.GetExistingVehicleSpecificationsAsync(request.Vin, vehiclesDbSet, cache);
+        var existingSpecifications = await ImportVehicleSpecificationsUtils.GetExistingVehicleSpecificationsAsync(request.Vin, vehiclesDbSet);
         if (ImportVehicleSpecificationsUtils.VehicleSpecificationsAreAlreadyImported(existingSpecifications))
         {
             response.Specifications.AddRange(existingSpecifications.Select(s => new GetVehicleSpecificationsResponse
@@ -26,8 +27,6 @@ public class VehicleSpecificationsService(GetVehicleSpecificationsConfig vehicle
 
         var specificationsToImport = await ImportVehicleSpecificationsUtils.FetchVehicleSpecificationsAsync(request.Vin, vehicleSpecificationsConfig, logger);
         await ImportVehicleSpecificationsUtils.SaveNewVehicleSpecificationsAsync(request.Vin, specificationsToImport, vehiclesDbSet);
-
-        await cache.SetStringAsync(request.Vin, JsonSerializer.Serialize(specificationsToImport));
 
         response.Specifications.AddRange(specificationsToImport.Select(s => new GetVehicleSpecificationsResponse
         {

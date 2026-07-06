@@ -1,4 +1,4 @@
-﻿namespace AutoWise.UserVehicles.API.Domain;
+﻿namespace AutoWise.UserVehicles.API.Persistence.Domain;
 
 public class UserVehicle : ModifiedCreatedAuditBaseEntity
 {

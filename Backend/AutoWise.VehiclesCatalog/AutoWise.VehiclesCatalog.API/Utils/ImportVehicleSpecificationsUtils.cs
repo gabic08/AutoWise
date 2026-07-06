@@ -2,14 +2,8 @@
 
 public static class ImportVehicleSpecificationsUtils
 {
-    public static async Task<IEnumerable<VehicleSpecification>> GetExistingVehicleSpecificationsAsync(string vin, IMongoCollection<Vehicle> vehiclesDbSet, IDistributedCache cache, CancellationToken cancellationToken = default)
+    public static async Task<IEnumerable<VehicleSpecification>> GetExistingVehicleSpecificationsAsync(string vin, IMongoCollection<Vehicle> vehiclesDbSet, CancellationToken cancellationToken = default)
     {
-        var cachedVehicleSpecifications = await cache.GetStringAsync(vin, cancellationToken);
-        if (cachedVehicleSpecifications.NotNullOrEmpty())
-        {
-            return JsonSerializer.Deserialize<List<VehicleSpecification>>(cachedVehicleSpecifications);
-        }
-
         return await vehiclesDbSet
             .Find(v => v.Vin == vin)
             .Project(v => v.Specifications)

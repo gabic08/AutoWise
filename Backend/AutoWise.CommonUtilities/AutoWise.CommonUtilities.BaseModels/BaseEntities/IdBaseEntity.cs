@@ -2,7 +2,7 @@
 
 namespace AutoWise.CommonUtilities.Models.BaseEntities;
 
-public class IdBaseEntity : IIdBaseEntity
+public abstract class IdBaseEntity : IIdBaseEntity
 {
     public Guid Id { get; set; }
 }

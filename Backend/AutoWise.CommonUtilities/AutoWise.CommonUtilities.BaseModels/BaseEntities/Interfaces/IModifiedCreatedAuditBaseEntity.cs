@@ -1,15 +1,13 @@
-﻿using System;
-
-namespace AutoWise.CommonUtilities.Models.BaseEntities.Interfaces;
+﻿namespace AutoWise.CommonUtilities.Models.BaseEntities.Interfaces;
 
 public interface IModifiedCreatedAuditBaseEntity : ICreatedAuditBaseEntity
 {
-    Guid? ModifiedByUserId { get; set; }
-    DateTime? ModifiedOn { get; set; }
+    Guid? LastModifiedByUserId { get; set; }
+    DateTime? LastModifiedOn { get; set; }
 }
 
 public interface IModifiedCreatedAuditBaseEntity<TUser> : IModifiedCreatedAuditBaseEntity, ICreatedAuditBaseEntity<TUser>
     where TUser : class
 {
-    TUser ModifiedByUser { get; set; }
+    TUser LastModifiedByUser { get; set; }
 }

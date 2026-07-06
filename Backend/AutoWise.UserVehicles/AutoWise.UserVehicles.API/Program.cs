@@ -1,23 +1,37 @@
-using AutoWise.UserVehicles.API;
+using AutoWise.UserVehicles.Application;
+using AutoWise.UserVehicles.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddApplicationServices()
+    .AddInfrastructureServices(builder.Configuration)
+    .AddApiServices();
+
+
+
+
+
+
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.AddDbContext();
 
-builder.Services.AddScoped<IPersistenceContext, PersistenceContext<UserVehiclesDbContext>>((provider) =>
-{
-    var userVehiclesPersistenceContext = new PersistenceContext<UserVehiclesDbContext>(provider);
-    return userVehiclesPersistenceContext;
-});
-
 builder.Services.AddScoped<IUserVehicleRepository, UserVehicleRepository>();
+
+builder.Services.AddScoped<IUserVehicleService, UserVehicleService>();
+
+builder.Services.AddGrpcClient<VehicleSpecificationsProtoService.VehicleSpecificationsProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration.GetSection("GrpcSettings:VehiclesCatalogUrl").Value);
+});
 
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
 }
+
 
 builder.Services.AddGrpc();
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
