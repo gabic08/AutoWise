@@ -10,6 +10,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.OpenApi" Version="2.10.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.6" />
   </ItemGroup>
 
@@ -33,12 +42,6 @@
     </Reference>
     <Reference Include="AutoWise.CommonUtilities.Models">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
-    </Reference>
-    <Reference Include="AutoWise.CommonUtilities.Repository.Abstractions">
-      <HintPath>..\Libraries\AutoWise.CommonUtilities.Repository.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="AutoWise.CommonUtilities.Repository.PostgreSQL">
-      <HintPath>..\Libraries\AutoWise.CommonUtilities.Repository.PostgreSQL.dll</HintPath>
     </Reference>
   </ItemGroup>
 

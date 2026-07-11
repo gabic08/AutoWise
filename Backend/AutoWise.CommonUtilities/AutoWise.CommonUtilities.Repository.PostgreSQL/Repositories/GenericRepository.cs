@@ -1,12 +1,12 @@
 ﻿using AutoWise.CommonUtilities.Models.BaseEntities.Interfaces;
 using AutoWise.CommonUtilities.Models.Enums;
 using AutoWise.CommonUtilities.Models.Queries;
-using AutoWise.CommonUtilities.Repository.Abstractions;
+using AutoWise.CommonUtilities.Persistence.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace AutoWise.CommonUtilities.Repository.PostgreSQL.Repositories;
+namespace AutoWise.CommonUtilities.Persistence.PostgreSQL.Repositories;
 
 public class GenericRepository<TEntity>(DbContext dbContext) : IGenericRepository<TEntity> where TEntity : class, IIdBaseEntity
 {

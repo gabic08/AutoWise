@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AutoWise.CommonUtilities.Repository.PostgreSQL.Configurations;
+namespace AutoWise.CommonUtilities.Persistence.PostgreSQL.Configurations;
 
 public abstract class IdBaseEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : class, IIdBaseEntity
 {

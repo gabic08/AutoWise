@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-namespace AutoWise.CommonUtilities.Repository.PostgreSQL.Context;
+namespace AutoWise.CommonUtilities.Persistence.PostgreSQL.Context;
 
 public static class DbContextConfiguration
 {
@@ -17,7 +17,7 @@ public static class DbContextConfiguration
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetCallingAssembly());
     }
 
-    internal static void ConfigureEntityConversionToUtc(this ModelBuilder modelBuilder)
+    private static void ConfigureEntityConversionToUtc(this ModelBuilder modelBuilder)
     {
         // Apply UTC timestamp convention globally
         foreach (var property in modelBuilder.Model.GetEntityTypes()

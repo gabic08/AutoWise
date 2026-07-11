@@ -1,4 +1,4 @@
-﻿namespace AutoWise.UserVehicles.Application;
+﻿namespace AutoWise.UserVehicles.Application.Extensions;
 
 public static class DependencyInjectionExtensions
 {

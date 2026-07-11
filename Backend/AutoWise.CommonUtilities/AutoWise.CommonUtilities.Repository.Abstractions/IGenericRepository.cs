@@ -4,7 +4,7 @@ using AutoWise.CommonUtilities.Models.Queries;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace AutoWise.CommonUtilities.Repository.Abstractions;
+namespace AutoWise.CommonUtilities.Persistence.Abstractions;
 
 public interface IGenericRepository<TEntity> where TEntity : class, IIdBaseEntity
 {
