@@ -16,20 +16,19 @@ public class UserVehicle : ModifiedCreatedAuditBaseEntity
 
     private UserVehicle() { }
 
-    public UserVehicle(
-        Guid userId,
-        string licensePlateNumber,
-        string make,
-        string model,
-        string vin,
-        int? year)
+    public static UserVehicle Create(Guid userId, string licensePlateNumber, string make, string model, string vin, int? year)
     {
-        UserId = userId;
-        ChangeLicensePlateNumber(licensePlateNumber);
-        SetMake(make);
-        SetModel(model);
-        SetVin(vin);
-        SetYear(year);
+        var vehicle = new UserVehicle
+        {
+            UserId = userId
+        };
+        vehicle.ChangeLicensePlateNumber(licensePlateNumber);
+        vehicle.SetMake(make);
+        vehicle.SetModel(model);
+        vehicle.SetVin(vin);
+        vehicle.SetYear(year);
+
+        return vehicle;
     }
 
     public void ChangeLicensePlateNumber(string licensePlateNumber)

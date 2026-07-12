@@ -23,10 +23,6 @@ builder.Services.AddOpenApi();
 
 //builder.Services.AddScoped<IUserVehicleService, UserVehicleService>();
 
-//builder.Services.AddGrpcClient<VehicleSpecificationsProtoService.VehicleSpecificationsProtoServiceClient>(options =>
-//{
-//    options.Address = new Uri(builder.Configuration.GetSection("GrpcSettings:VehiclesCatalogUrl").Value);
-//});
 
 //if (builder.Environment.IsDevelopment())
 //{
@@ -34,7 +30,6 @@ builder.Services.AddOpenApi();
 //}
 
 
-//builder.Services.AddGrpc();
 //builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 //builder.Services.AddStackExchangeRedisCache(options =>

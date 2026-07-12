@@ -1,10 +1,12 @@
 ﻿using AutoWise.CommonUtilities.Persistence.PostgreSQL.Context;
+using AutoWise.UserVehicles.Application.Data;
 using AutoWise.UserVehicles.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoWise.UserVehicles.Infrastructure.Data;
 
-public class UserVehiclesDbContext(DbContextOptions<UserVehiclesDbContext> options) : DbContext(options)
+public class UserVehiclesDbContext(DbContextOptions<UserVehiclesDbContext> options)
+    : DbContext(options), IUserVehiclesDbContext
 {
     public DbSet<UserVehicle> UserVehicles => Set<UserVehicle>();
     public DbSet<UserVehicleEvent> UserVehicleEvents => Set<UserVehicleEvent>();

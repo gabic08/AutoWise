@@ -3,12 +3,22 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AutoWise.UserVehicles.Domain\AutoWise.UserVehicles.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AutoWise.CommonUtilities.Models">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

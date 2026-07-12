@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <OutputType>Library</OutputType>
   </PropertyGroup>
 
@@ -23,6 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="..\..\AutoWise.VehiclesCatalog\AutoWise.VehiclesCatalog.API\Grpc\Protos\vehiclespecifications.proto" GrpcServices="Client">
+      <Link>Protos\vehiclespecifications.proto</Link>
+    </Protobuf>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AutoWise.CommonUtilities.Exceptions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
+    </Reference>
     <Reference Include="AutoWise.CommonUtilities.Models">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
     </Reference>

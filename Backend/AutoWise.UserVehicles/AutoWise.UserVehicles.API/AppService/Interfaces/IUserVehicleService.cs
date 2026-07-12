@@ -1,6 +1,8 @@
-﻿namespace AutoWise.UserVehicles.API.AppService.Interfaces;
+﻿using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
+
+namespace AutoWise.UserVehicles.API.AppService.Interfaces;
 
 public interface IUserVehicleService
 {
-    Task<Guid> AddUserVehicleAsync(AddVehicleRequest request, Guid sessionUserId, CancellationToken cancellationToken);
+    Task<Guid> AddUserVehicleAsync(CreateUserVehicleRequest request, Guid sessionUserId, CancellationToken cancellationToken);
 }
