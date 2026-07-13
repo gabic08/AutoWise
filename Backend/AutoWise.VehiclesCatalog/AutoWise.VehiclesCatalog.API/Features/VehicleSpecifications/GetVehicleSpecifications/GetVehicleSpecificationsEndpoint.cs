@@ -6,7 +6,7 @@ public class GetVehicleSpecificationsEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("vehicles-catalog/specifications/{vin}", async (string vin, ISender sender) =>
+        app.MapGet("api/vehicles-catalog/specifications/{vin}", async (string vin, ISender sender) =>
         {
             var result = await sender.Send(new GetVehicleSpecificationsQuery(vin));
 

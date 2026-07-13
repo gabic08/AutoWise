@@ -6,7 +6,7 @@ public class DeleteVehicleSpecificationsEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("vehicles-catalog/specifications/{vin}", async (string vin, ISender sender) =>
+        app.MapDelete("api/vehicles-catalog/specifications/{vin}", async (string vin, ISender sender) =>
         {
             var result = await sender.Send(new DeleteVehicleSpecificationsCommand(vin));
 

@@ -7,7 +7,7 @@ public class AddVehicleSpecificationsEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("vehicles-catalog/specifications", async (AddVehicleSpecificationsRequest request, ISender sender) =>
+        app.MapPost("api/vehicles-catalog/specifications", async (AddVehicleSpecificationsRequest request, ISender sender) =>
         {
             var result = await sender.Send(new AddVehicleSpecificationsCommand(request.Vin,
                 request.Specifications?.Select(s => new VehicleSpecification
@@ -18,7 +18,7 @@ public class AddVehicleSpecificationsEndpoint : ICarterModule
 
             var response = new AddVehicleSpecificationsResponse(result.Id, result.Vin);
 
-            return Results.Created($"/vehicle-specifications/{request.Vin}", response);
+            return Results.Created($"/api/vehicles-catalog/specifications/{request.Vin}", response);
         })
         .WithName("AddVehicleSpecifications")
         .Produces<AddVehicleSpecificationsResponse>(StatusCodes.Status201Created)
