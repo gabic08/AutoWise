@@ -1,18 +1,19 @@
 ﻿using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
+using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoWise.UserVehicles.API.Controllers;
 
 [Route("api")]
 [ApiController]
-public class UserVehicleController(IUserVehicleService userVehicleService) : ControllerBase
+public class UserVehicleController(IUserVehiclesService userVehicleService) : ControllerBase
 {
-    private readonly IUserVehicleService _userVehicleService = userVehicleService;
-    private readonly Guid temporaryUserId = new("3670849e-1a32-4383-aec2-c6186482c8f7");
+    private readonly IUserVehiclesService _userVehiclesService = userVehicleService;
+    private readonly Guid temporaryUserId = new("54cf3f84-ef0b-47e7-9480-a6e5d0be9052");
 
     [HttpPost("user-vehicles")]
     public async Task<IActionResult> AddUserVehicleAsync(CreateUserVehicleRequest request, CancellationToken cancellationToken)
     {
-        return Ok(await _userVehicleService.AddUserVehicleAsync(request, temporaryUserId, cancellationToken));
+        return Ok(await _userVehiclesService.CreateAsync(request, temporaryUserId, cancellationToken));
     }
 }
