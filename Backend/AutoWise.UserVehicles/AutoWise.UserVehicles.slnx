@@ -3,4 +3,5 @@
   <Project Path="AutoWise.UserVehicles.Application/AutoWise.UserVehicles.Application.csproj" Id="170db589-98d8-4330-9c51-e7f365be634f" />
   <Project Path="AutoWise.UserVehicles.Domain/AutoWise.UserVehicles.Domain.csproj" Id="b13c7677-057f-47b5-b081-9e1922087347" />
   <Project Path="AutoWise.UserVehicles.Infrastructure/AutoWise.UserVehicles.Infrastructure.csproj" Id="5ebafe62-5e7c-4d58-940d-c41530c0e1cd" />
+  <Project Path="AutoWise.UserVehicles.Tests/AutoWise.UserVehicles.Tests.csproj" Id="9526d357-d3fd-491f-9412-dbd8d138f8cc" />
 </Solution>

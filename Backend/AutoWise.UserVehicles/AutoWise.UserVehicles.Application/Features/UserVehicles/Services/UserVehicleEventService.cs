@@ -26,6 +26,7 @@ public class UserVehicleEventService(IUserVehiclesDbContext dbContext) : IUserVe
     {
         var vehicle = await _dbContext.UserVehicles
             .AsNoTracking()
+            .Include(uv => uv.UserVehicleEvents.Where(uve => uve.Id == eventId))
             .FirstOrDefaultAsync(v => v.Id == vehicleId, ct)
             ?? throw new NotFoundException($"User vehicle with id '{vehicleId}' was not found.");
 
