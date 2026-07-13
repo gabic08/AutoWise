@@ -1,7 +1,9 @@
-﻿using AutoWise.UserVehicles.Application.Data;
+﻿using AutoWise.CommonUtilities.Exceptions;
+using AutoWise.UserVehicles.Application.Data;
 using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
 using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
 using AutoWise.UserVehicles.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
 
@@ -34,18 +36,32 @@ public class UserVehiclesService(IUserVehiclesDbContext dbContext, IVehicleSpeci
         return newVehicle.Id;
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken ct = default)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<UserVehicleResponse> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var vehicle = await _dbContext.UserVehicles
+            .AsNoTracking()
+            .FirstOrDefaultAsync(v => v.Id == id, ct)
+            ?? throw new NotFoundException($"User vehicle with id '{id}' was not found.");
+
+        return new UserVehicleResponse(vehicle.Id, vehicle.LicensePlateNumber);
     }
 
     public async Task UpdateAsync(Guid id, UpdateUserVehicleRequest request, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var vehicle = await _dbContext.UserVehicles.FirstOrDefaultAsync(v => v.Id == id, ct)
+            ?? throw new NotFoundException($"User vehicle with id '{id}' was not found.");
+
+        vehicle.ChangeLicensePlateNumber(request.LicensePlateNumber);
+
+        await _dbContext.SaveChangesAsync(ct);
+    }
+
+    public async Task DeleteAsync(Guid id, CancellationToken ct = default)
+    {
+        var vehicle = await _dbContext.UserVehicles.FirstOrDefaultAsync(v => v.Id == id, ct)
+            ?? throw new NotFoundException($"User vehicle with id '{id}' was not found.");
+
+        _dbContext.UserVehicles.Remove(vehicle);
+        await _dbContext.SaveChangesAsync(ct);
     }
 }

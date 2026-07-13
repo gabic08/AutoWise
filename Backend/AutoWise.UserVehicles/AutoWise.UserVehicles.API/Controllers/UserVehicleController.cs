@@ -16,4 +16,24 @@ public class UserVehicleController(IUserVehiclesService userVehicleService) : Co
     {
         return Ok(await _userVehiclesService.CreateAsync(request, temporaryUserId, cancellationToken));
     }
+
+    [HttpGet("user-vehicles/{id:guid}")]
+    public async Task<IActionResult> GetUserVehicleAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return Ok(await _userVehiclesService.GetByIdAsync(id, cancellationToken));
+    }
+
+    [HttpPut("user-vehicles/{id:guid}")]
+    public async Task<IActionResult> UpdateUserVehicleAsync(Guid id, UpdateUserVehicleRequest request, CancellationToken cancellationToken)
+    {
+        await _userVehiclesService.UpdateAsync(id, request, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpDelete("user-vehicles/{id:guid}")]
+    public async Task<IActionResult> DeleteUserVehicleAsync(Guid id, CancellationToken cancellationToken)
+    {
+        await _userVehiclesService.DeleteAsync(id, cancellationToken);
+        return NoContent();
+    }
 }

@@ -80,4 +80,28 @@ public class UserVehicle : ModifiedCreatedAuditBaseEntity
         }
         Year = year;
     }
+
+    public UserVehicleEvent AddEvent(string name, string description, DateTime eventDate)
+    {
+        var vehicleEvent = UserVehicleEvent.Create(Id, name, description, eventDate);
+        _userVehicleEvents.Add(vehicleEvent);
+
+        return vehicleEvent;
+    }
+
+    public void UpdateEvent(Guid eventId, string name, string description, DateTime eventDate)
+    {
+        var vehicleEvent = _userVehicleEvents.FirstOrDefault(e => e.Id == eventId)
+            ?? throw new InvalidOperationException($"Vehicle event with id '{eventId}' does not belong to this vehicle.");
+
+        vehicleEvent.Update(name, description, eventDate);
+    }
+
+    public void RemoveEvent(Guid eventId)
+    {
+        var vehicleEvent = _userVehicleEvents.FirstOrDefault(e => e.Id == eventId)
+            ?? throw new InvalidOperationException($"Vehicle event with id '{eventId}' does not belong to this vehicle.");
+
+        _userVehicleEvents.Remove(vehicleEvent);
+    }
 }

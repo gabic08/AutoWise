@@ -1,4 +1,4 @@
 ﻿namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
 
-public record CreateUserVehicleEventRequest();
+public record CreateUserVehicleEventRequest(string Name, string Description, DateTime EventDate);
 

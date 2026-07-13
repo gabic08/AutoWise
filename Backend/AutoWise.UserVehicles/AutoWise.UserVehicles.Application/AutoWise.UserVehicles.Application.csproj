@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="AutoWise.CommonUtilities.Exceptions">
+      <HintPath>..\..\AutoWise.VehiclesCatalog\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
+    </Reference>
     <Reference Include="AutoWise.CommonUtilities.Models">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
     </Reference>

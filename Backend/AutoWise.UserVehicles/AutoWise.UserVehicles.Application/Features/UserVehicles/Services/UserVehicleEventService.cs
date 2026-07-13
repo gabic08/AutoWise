@@ -1,27 +1,75 @@
-﻿using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
+﻿using AutoWise.CommonUtilities.Exceptions;
+using AutoWise.UserVehicles.Application.Data;
+using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
 using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
 
-public class UserVehicleEventService : IUserVehicleEventService
+public class UserVehicleEventService(IUserVehiclesDbContext dbContext) : IUserVehicleEventService
 {
-    public Task<Guid> AddEventAsync(Guid vehicleId, CreateUserVehicleEventRequest request, CancellationToken ct = default)
+    private readonly IUserVehiclesDbContext _dbContext = dbContext;
+
+    public async Task<Guid> AddEventAsync(Guid vehicleId, CreateUserVehicleEventRequest request, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var vehicle = await _dbContext.UserVehicles.FirstOrDefaultAsync(v => v.Id == vehicleId, ct)
+            ?? throw new NotFoundException($"User vehicle with id '{vehicleId}' was not found.");
+
+        var vehicleEvent = vehicle.AddEvent(request.Name, request.Description, request.EventDate);
+
+        await _dbContext.SaveChangesAsync(ct);
+
+        return vehicleEvent.Id;
     }
 
-    public Task<UserVehicleEventResponse> GetEventAsync(Guid vehicleId, Guid eventId, CancellationToken ct = default)
+    public async Task<UserVehicleEventResponse> GetEventAsync(Guid vehicleId, Guid eventId, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var vehicle = await _dbContext.UserVehicles
+            .AsNoTracking()
+            .FirstOrDefaultAsync(v => v.Id == vehicleId, ct)
+            ?? throw new NotFoundException($"User vehicle with id '{vehicleId}' was not found.");
+
+        var vehicleEvent = vehicle.UserVehicleEvents.FirstOrDefault(e => e.Id == eventId)
+            ?? throw new NotFoundException($"Vehicle event with id '{eventId}' was not found.");
+
+        return new UserVehicleEventResponse(
+            vehicleEvent.Id,
+            vehicleEvent.Name,
+            vehicleEvent.Description,
+            vehicleEvent.EventDate);
     }
 
-    public Task RemoveEventAsync(Guid vehicleId, Guid eventId, CancellationToken ct = default)
+    public async Task UpdateEventAsync(Guid vehicleId, Guid eventId, UpdateUserVehicleEventRequest request, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var vehicle = await _dbContext.UserVehicles
+            .Include(uv => uv.UserVehicleEvents.Where(uve => uve.Id == eventId))
+            .FirstOrDefaultAsync(v => v.Id == vehicleId, ct)
+            ?? throw new NotFoundException($"User vehicle with id '{vehicleId}' was not found.");
+
+        if (!vehicle.UserVehicleEvents.Any(e => e.Id == eventId))
+        {
+            throw new NotFoundException($"Vehicle event with id '{eventId}' was not found.");
+        }
+
+        vehicle.UpdateEvent(eventId, request.Name, request.Description, request.EventDate);
+
+        await _dbContext.SaveChangesAsync(ct);
     }
 
-    public Task UpdateEventAsync(Guid vehicleId, Guid eventId, UpdateUserVehicleEventRequest request, CancellationToken ct = default)
+    public async Task RemoveEventAsync(Guid vehicleId, Guid eventId, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var vehicle = await _dbContext.UserVehicles
+            .Include(uv => uv.UserVehicleEvents.Where(uve => uve.Id == eventId))
+            .FirstOrDefaultAsync(v => v.Id == vehicleId, ct)
+            ?? throw new NotFoundException($"User vehicle with id '{vehicleId}' was not found.");
+
+        if (!vehicle.UserVehicleEvents.Any(e => e.Id == eventId))
+        {
+            throw new NotFoundException($"Vehicle event with id '{eventId}' was not found.");
+        }
+
+        vehicle.RemoveEvent(eventId);
+
+        await _dbContext.SaveChangesAsync(ct);
     }
 }
