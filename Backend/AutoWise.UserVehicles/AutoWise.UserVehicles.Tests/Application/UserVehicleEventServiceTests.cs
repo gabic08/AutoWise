@@ -3,6 +3,7 @@ using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
 using AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
 using AutoWise.UserVehicles.Domain.Models;
 using AutoWise.UserVehicles.Tests.TestDoubles;
+using FluentAssertions;
 
 namespace AutoWise.UserVehicles.Tests.Application;
 
@@ -33,9 +34,9 @@ public class UserVehicleEventServiceTests
 
         // Assert
         var persistedEvent = await dbContext.UserVehicleEvents.FindAsync(eventId);
-        Assert.NotNull(persistedEvent);
-        Assert.Equal("Oil Change", persistedEvent!.Name);
-        Assert.Equal(vehicle.Id, persistedEvent.UserVehicleId);
+        persistedEvent.Should().NotBeNull();
+        persistedEvent!.Name.Should().Be("Oil Change");
+        persistedEvent.UserVehicleId.Should().Be(vehicle.Id);
     }
 
     [Fact]
@@ -46,8 +47,11 @@ public class UserVehicleEventServiceTests
         var sut = new UserVehicleEventService(dbContext);
         var request = new CreateUserVehicleEventRequest("Oil Change", "Full synthetic", DateTime.UtcNow);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => sut.AddEventAsync(Guid.NewGuid(), request));
+        // Act
+        Func<Task> act = () => sut.AddEventAsync(Guid.NewGuid(), request);
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]
@@ -63,8 +67,8 @@ public class UserVehicleEventServiceTests
         var response = await sut.GetEventAsync(vehicle.Id, eventId);
 
         // Assert
-        Assert.Equal(eventId, response.Id);
-        Assert.Equal("Oil Change", response.Name);
+        response.Id.Should().Be(eventId);
+        response.Name.Should().Be("Oil Change");
     }
 
     [Fact]
@@ -75,8 +79,11 @@ public class UserVehicleEventServiceTests
         var vehicle = await SeedVehicleAsync(dbContext);
         var sut = new UserVehicleEventService(dbContext);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => sut.GetEventAsync(vehicle.Id, Guid.NewGuid()));
+        // Act
+        Func<Task> act = () => sut.GetEventAsync(vehicle.Id, Guid.NewGuid());
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]
@@ -94,9 +101,9 @@ public class UserVehicleEventServiceTests
 
         // Assert
         var updatedEvent = await dbContext.UserVehicleEvents.FindAsync(eventId);
-        Assert.Equal("Tire Rotation", updatedEvent!.Name);
-        Assert.Equal("Rotated tires", updatedEvent.Description);
-        Assert.Equal(newDate, updatedEvent.EventDate);
+        updatedEvent!.Name.Should().Be("Tire Rotation");
+        updatedEvent.Description.Should().Be("Rotated tires");
+        updatedEvent.EventDate.Should().Be(newDate);
     }
 
     [Fact]
@@ -106,9 +113,12 @@ public class UserVehicleEventServiceTests
         await using var dbContext = InMemoryUserVehiclesDbContext.Create();
         var sut = new UserVehicleEventService(dbContext);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() =>
-            sut.UpdateEventAsync(Guid.NewGuid(), Guid.NewGuid(), new UpdateUserVehicleEventRequest("Tire Rotation", "Rotated tires", DateTime.UtcNow)));
+        // Act
+        Func<Task> act = () =>
+            sut.UpdateEventAsync(Guid.NewGuid(), Guid.NewGuid(), new UpdateUserVehicleEventRequest("Tire Rotation", "Rotated tires", DateTime.UtcNow));
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]
@@ -119,9 +129,12 @@ public class UserVehicleEventServiceTests
         var vehicle = await SeedVehicleAsync(dbContext);
         var sut = new UserVehicleEventService(dbContext);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() =>
-            sut.UpdateEventAsync(vehicle.Id, Guid.NewGuid(), new UpdateUserVehicleEventRequest("Tire Rotation", "Rotated tires", DateTime.UtcNow)));
+        // Act
+        Func<Task> act = () =>
+            sut.UpdateEventAsync(vehicle.Id, Guid.NewGuid(), new UpdateUserVehicleEventRequest("Tire Rotation", "Rotated tires", DateTime.UtcNow));
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]
@@ -137,7 +150,8 @@ public class UserVehicleEventServiceTests
         await sut.RemoveEventAsync(vehicle.Id, eventId);
 
         // Assert
-        Assert.Null(await dbContext.UserVehicleEvents.FindAsync(eventId));
+        var deletedEvent = await dbContext.UserVehicleEvents.FindAsync(eventId);
+        deletedEvent.Should().BeNull();
     }
 
     [Fact]
@@ -148,7 +162,10 @@ public class UserVehicleEventServiceTests
         var vehicle = await SeedVehicleAsync(dbContext);
         var sut = new UserVehicleEventService(dbContext);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => sut.RemoveEventAsync(vehicle.Id, Guid.NewGuid()));
+        // Act
+        Func<Task> act = () => sut.RemoveEventAsync(vehicle.Id, Guid.NewGuid());
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 }

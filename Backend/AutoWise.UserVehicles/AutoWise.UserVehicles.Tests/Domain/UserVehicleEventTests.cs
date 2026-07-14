@@ -1,4 +1,5 @@
 using AutoWise.UserVehicles.Domain.Models;
+using FluentAssertions;
 
 namespace AutoWise.UserVehicles.Tests.Domain;
 
@@ -15,10 +16,10 @@ public class UserVehicleEventTests
         var vehicleEvent = UserVehicleEvent.Create(vehicleId, "Oil Change", "Full synthetic oil change", eventDate);
 
         // Assert
-        Assert.Equal(vehicleId, vehicleEvent.UserVehicleId);
-        Assert.Equal("Oil Change", vehicleEvent.Name);
-        Assert.Equal("Full synthetic oil change", vehicleEvent.Description);
-        Assert.Equal(eventDate, vehicleEvent.EventDate);
+        vehicleEvent.UserVehicleId.Should().Be(vehicleId);
+        vehicleEvent.Name.Should().Be("Oil Change");
+        vehicleEvent.Description.Should().Be("Full synthetic oil change");
+        vehicleEvent.EventDate.Should().Be(eventDate);
     }
 
     [Theory]
@@ -27,9 +28,11 @@ public class UserVehicleEventTests
     [InlineData(null)]
     public void Create_WithInvalidName_ThrowsArgumentException(string? name)
     {
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
-            UserVehicleEvent.Create(Guid.NewGuid(), name!, "Description", DateTime.UtcNow));
+        // Act
+        var act = () => UserVehicleEvent.Create(Guid.NewGuid(), name!, "Description", DateTime.UtcNow);
+
+        // Assert
+        act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
@@ -43,9 +46,9 @@ public class UserVehicleEventTests
         vehicleEvent.Update("Tire Rotation", "Rotated all four tires", newDate);
 
         // Assert
-        Assert.Equal("Tire Rotation", vehicleEvent.Name);
-        Assert.Equal("Rotated all four tires", vehicleEvent.Description);
-        Assert.Equal(newDate, vehicleEvent.EventDate);
+        vehicleEvent.Name.Should().Be("Tire Rotation");
+        vehicleEvent.Description.Should().Be("Rotated all four tires");
+        vehicleEvent.EventDate.Should().Be(newDate);
     }
 
     [Fact]
@@ -54,7 +57,10 @@ public class UserVehicleEventTests
         // Arrange
         var vehicleEvent = UserVehicleEvent.Create(Guid.NewGuid(), "Oil Change", "Full synthetic", DateTime.UtcNow);
 
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() => vehicleEvent.Update(" ", "Description", DateTime.UtcNow));
+        // Act
+        var act = () => vehicleEvent.Update(" ", "Description", DateTime.UtcNow);
+
+        // Assert
+        act.Should().Throw<ArgumentException>();
     }
 }

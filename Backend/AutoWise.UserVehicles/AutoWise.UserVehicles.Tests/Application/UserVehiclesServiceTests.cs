@@ -4,6 +4,7 @@ using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
 using AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
 using AutoWise.UserVehicles.Domain.Models;
 using AutoWise.UserVehicles.Tests.TestDoubles;
+using FluentAssertions;
 using NSubstitute;
 
 namespace AutoWise.UserVehicles.Tests.Application;
@@ -40,12 +41,12 @@ public class UserVehiclesServiceTests
 
         // Assert
         var persisted = await dbContext.UserVehicles.FindAsync(vehicleId);
-        Assert.NotNull(persisted);
-        Assert.Equal("ABC-123", persisted!.LicensePlateNumber);
-        Assert.Equal("Toyota", persisted.Make);
-        Assert.Equal("Corolla", persisted.Model);
-        Assert.Equal(2020, persisted.Year);
-        Assert.Equal(userId, persisted.UserId);
+        persisted.Should().NotBeNull();
+        persisted!.LicensePlateNumber.Should().Be("ABC-123");
+        persisted.Make.Should().Be("Toyota");
+        persisted.Model.Should().Be("Corolla");
+        persisted.Year.Should().Be(2020);
+        persisted.UserId.Should().Be(userId);
     }
 
     [Fact]
@@ -62,8 +63,8 @@ public class UserVehiclesServiceTests
         var response = await sut.GetByIdAsync(vehicle.Id);
 
         // Assert
-        Assert.Equal(vehicle.Id, response.Id);
-        Assert.Equal("ABC-123", response.LicensePlateNumber);
+        response.Id.Should().Be(vehicle.Id);
+        response.LicensePlateNumber.Should().Be("ABC-123");
     }
 
     [Fact]
@@ -73,8 +74,11 @@ public class UserVehiclesServiceTests
         await using var dbContext = InMemoryUserVehiclesDbContext.Create();
         var sut = new UserVehiclesService(dbContext, CreateSpecsService());
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => sut.GetByIdAsync(Guid.NewGuid()));
+        // Act
+        Func<Task> act = () => sut.GetByIdAsync(Guid.NewGuid());
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]
@@ -92,7 +96,7 @@ public class UserVehiclesServiceTests
 
         // Assert
         var updated = await dbContext.UserVehicles.FindAsync(vehicle.Id);
-        Assert.Equal("XYZ-999", updated!.LicensePlateNumber);
+        updated!.LicensePlateNumber.Should().Be("XYZ-999");
     }
 
     [Fact]
@@ -102,9 +106,11 @@ public class UserVehiclesServiceTests
         await using var dbContext = InMemoryUserVehiclesDbContext.Create();
         var sut = new UserVehiclesService(dbContext, CreateSpecsService());
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() =>
-            sut.UpdateAsync(Guid.NewGuid(), new UpdateUserVehicleRequest("XYZ-999")));
+        // Act
+        Func<Task> act = () => sut.UpdateAsync(Guid.NewGuid(), new UpdateUserVehicleRequest("XYZ-999"));
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]
@@ -121,7 +127,8 @@ public class UserVehiclesServiceTests
         await sut.DeleteAsync(vehicle.Id);
 
         // Assert
-        Assert.Null(await dbContext.UserVehicles.FindAsync(vehicle.Id));
+        var deleted = await dbContext.UserVehicles.FindAsync(vehicle.Id);
+        deleted.Should().BeNull();
     }
 
     [Fact]
@@ -131,7 +138,10 @@ public class UserVehiclesServiceTests
         await using var dbContext = InMemoryUserVehiclesDbContext.Create();
         var sut = new UserVehiclesService(dbContext, CreateSpecsService());
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => sut.DeleteAsync(Guid.NewGuid()));
+        // Act
+        Func<Task> act = () => sut.DeleteAsync(Guid.NewGuid());
+
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 }

@@ -1,4 +1,5 @@
 using AutoWise.UserVehicles.Domain.Models;
+using FluentAssertions;
 
 namespace AutoWise.UserVehicles.Tests.Domain;
 
@@ -14,13 +15,13 @@ public class UserVehicleTests
         var vehicle = UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
 
         // Assert
-        Assert.Equal(UserId, vehicle.UserId);
-        Assert.Equal("ABC-123", vehicle.LicensePlateNumber);
-        Assert.Equal("Toyota", vehicle.Make);
-        Assert.Equal("Corolla", vehicle.Model);
-        Assert.Equal(ValidVin, vehicle.Vin);
-        Assert.Equal(2020, vehicle.Year);
-        Assert.Empty(vehicle.UserVehicleEvents);
+        vehicle.UserId.Should().Be(UserId);
+        vehicle.LicensePlateNumber.Should().Be("ABC-123");
+        vehicle.Make.Should().Be("Toyota");
+        vehicle.Model.Should().Be("Corolla");
+        vehicle.Vin.Should().Be(ValidVin);
+        vehicle.Year.Should().Be(2020);
+        vehicle.UserVehicleEvents.Should().BeEmpty();
     }
 
     [Theory]
@@ -29,17 +30,21 @@ public class UserVehicleTests
     [InlineData(null)]
     public void Create_WithInvalidLicensePlate_ThrowsArgumentException(string? licensePlate)
     {
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
-            UserVehicle.Create(UserId, licensePlate!, "Toyota", "Corolla", ValidVin, 2020));
+        // Act
+        var act = () => UserVehicle.Create(UserId, licensePlate!, "Toyota", "Corolla", ValidVin, 2020);
+
+        // Assert
+        act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
     public void Create_WithInvalidVinLength_ThrowsArgumentOutOfRangeException()
     {
-        // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", "SHORTVIN", 2020));
+        // Act
+        var act = () => UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", "SHORTVIN", 2020);
+
+        // Assert
+        act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -48,9 +53,11 @@ public class UserVehicleTests
         // Arrange
         var invalidYear = DateTime.UtcNow.Year + 2;
 
-        // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, invalidYear));
+        // Act
+        var act = () => UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, invalidYear);
+
+        // Assert
+        act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -63,7 +70,7 @@ public class UserVehicleTests
         vehicle.ChangeLicensePlateNumber("  XYZ-999  ");
 
         // Assert
-        Assert.Equal("XYZ-999", vehicle.LicensePlateNumber);
+        vehicle.LicensePlateNumber.Should().Be("XYZ-999");
     }
 
     [Fact]
@@ -72,8 +79,11 @@ public class UserVehicleTests
         // Arrange
         var vehicle = UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
 
-        // Act & Assert
-        Assert.Throws<ArgumentException>(() => vehicle.ChangeLicensePlateNumber(" "));
+        // Act
+        var act = () => vehicle.ChangeLicensePlateNumber(" ");
+
+        // Assert
+        act.Should().Throw<ArgumentException>();
     }
 
     [Fact]
@@ -86,9 +96,9 @@ public class UserVehicleTests
         var addedEvent = vehicle.AddEvent("Oil Change", "Full synthetic oil change", DateTime.UtcNow);
 
         // Assert
-        Assert.Single(vehicle.UserVehicleEvents);
-        Assert.Same(addedEvent, vehicle.UserVehicleEvents.Single());
-        Assert.Equal(vehicle.Id, addedEvent.UserVehicleId);
+        vehicle.UserVehicleEvents.Should().ContainSingle();
+        vehicle.UserVehicleEvents.Single().Should().BeSameAs(addedEvent);
+        addedEvent.UserVehicleId.Should().Be(vehicle.Id);
     }
 
     [Fact]
@@ -103,9 +113,9 @@ public class UserVehicleTests
         vehicle.UpdateEvent(addedEvent.Id, "Tire Rotation", "Rotated all four tires", newDate);
 
         // Assert
-        Assert.Equal("Tire Rotation", addedEvent.Name);
-        Assert.Equal("Rotated all four tires", addedEvent.Description);
-        Assert.Equal(newDate, addedEvent.EventDate);
+        addedEvent.Name.Should().Be("Tire Rotation");
+        addedEvent.Description.Should().Be("Rotated all four tires");
+        addedEvent.EventDate.Should().Be(newDate);
     }
 
     [Fact]
@@ -114,9 +124,11 @@ public class UserVehicleTests
         // Arrange
         var vehicle = UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
 
-        // Act & Assert
-        Assert.Throws<InvalidOperationException>(() =>
-            vehicle.UpdateEvent(Guid.NewGuid(), "Tire Rotation", "Rotated all four tires", DateTime.UtcNow));
+        // Act
+        var act = () => vehicle.UpdateEvent(Guid.NewGuid(), "Tire Rotation", "Rotated all four tires", DateTime.UtcNow);
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
@@ -130,7 +142,7 @@ public class UserVehicleTests
         vehicle.RemoveEvent(addedEvent.Id);
 
         // Assert
-        Assert.Empty(vehicle.UserVehicleEvents);
+        vehicle.UserVehicleEvents.Should().BeEmpty();
     }
 
     [Fact]
@@ -139,7 +151,10 @@ public class UserVehicleTests
         // Arrange
         var vehicle = UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
 
-        // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => vehicle.RemoveEvent(Guid.NewGuid()));
+        // Act
+        var act = () => vehicle.RemoveEvent(Guid.NewGuid());
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>();
     }
 }
