@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="AutoWise.Media.API/AutoWise.Media.API.csproj" />
+  <Project Path="AutoWise.Media.Application/AutoWise.Media.Application.csproj" />
+  <Project Path="AutoWise.Media.Domain/AutoWise.Media.Domain.csproj" />
+  <Project Path="AutoWise.Media.Infrastructure/AutoWise.Media.Infrastructure.csproj" />
+  <Project Path="AutoWise.Media.Tests/AutoWise.Media.Tests.csproj" />
+</Solution>
