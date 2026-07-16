@@ -20,6 +20,8 @@ var app = builder.Build();
 
 app.UseApiServices();
 
+await app.ApplyMigrationsAsync();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

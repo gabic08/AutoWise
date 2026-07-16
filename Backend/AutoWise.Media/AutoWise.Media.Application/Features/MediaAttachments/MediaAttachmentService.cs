@@ -6,11 +6,10 @@ using AutoWise.Media.Application.Storage;
 using AutoWise.Media.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.Security.Cryptography;
 
 namespace AutoWise.Media.Application.Features.MediaAttachments;
 
-public class MediaAttachmentService(
+public partial class MediaAttachmentService(
     IMediaDbContext dbContext,
     IFileStorageProviderResolver storageProviderResolver,
     IOptions<MediaUploadOptions> mediaUploadOptions)
@@ -86,28 +85,5 @@ public class MediaAttachmentService(
 
         dbContext.MediaFiles.Remove(mediaFile);
         await dbContext.SaveChangesAsync(ct);
-    }
-
-    private async Task<Guid> SaveNewMediaFileAsync(UploadMediaRequest request, string contentHash, CancellationToken ct)
-    {
-        var fileExtension = Path.GetExtension(request.FileName).TrimStart('.');
-        var storageKey = $"{contentHash[..2]}/{contentHash[2..4]}/{contentHash}.{fileExtension}";
-
-        var provider = storageProviderResolver.ResolveActiveProvider();
-        await provider.SaveAsync(request.Content, storageKey, ct);
-
-        var mediaFile = MediaFile.Create(
-            contentHash, request.ContentType, fileExtension, request.Content.Length, provider.ProviderType, storageKey);
-
-        await dbContext.MediaFiles.AddAsync(mediaFile, ct);
-
-        return mediaFile.Id;
-    }
-
-    private static async Task<string> ComputeHashAsync(Stream content, CancellationToken ct)
-    {
-        var hashBytes = await SHA256.HashDataAsync(content, ct);
-        content.Position = 0;
-        return Convert.ToHexStringLower(hashBytes);
     }
 }
