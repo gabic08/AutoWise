@@ -9,6 +9,7 @@ Backend/
 ├── AutoWise.YarpApiGateway/     API gateway (YARP reverse proxy)
 ├── AutoWise.UserVehicles/       Clean Architecture service, PostgreSQL
 ├── AutoWise.VehiclesCatalog/    Vertical-slice service, MongoDB
+├── AutoWise.Media/              Clean Architecture service, PostgreSQL, pluggable file storage
 └── AutoWise.CommonUtilities/    Shared class libraries (consumed as prebuilt DLLs)
 ```
 
@@ -20,12 +21,13 @@ Client
   ▼
 AutoWise.YarpApiGateway  (:5102 / :7080)
   ├── /api/user-vehicles/**      ──HTTP──▶  AutoWise.UserVehicles.API      (:5077 / :7279)
-  └── /api/vehicles-catalog/**   ──HTTP──▶  AutoWise.VehiclesCatalog.API   (:4000 / :4040)
+  ├── /api/vehicles-catalog/**   ──HTTP──▶  AutoWise.VehiclesCatalog.API   (:4000 / :4040)
+  └── /api/media/**              ──HTTP──▶  AutoWise.Media.API             (:5248 / :7037)
 
 AutoWise.UserVehicles.API ──gRPC──▶ AutoWise.VehiclesCatalog (VehicleSpecificationsProtoService, :4040)
 ```
 
-- **No message broker** — no RabbitMQ/Kafka/MassTransit. The only cross-service call is a synchronous gRPC request from UserVehicles to VehiclesCatalog.
+- **No message broker yet** — no RabbitMQ/Kafka/MassTransit currently wired up. The only live cross-service call is the synchronous gRPC request from UserVehicles to VehiclesCatalog. A RabbitMQ event (Media → UserVehicles, to record a `UserVehicleAttachment` after a successful upload) is planned but not yet implemented.
 - **No service discovery** — every downstream address is a static URL in `appsettings.json`.
 - **No authentication yet** — no JWT/Identity/OAuth anywhere. UserVehicles stands in a hardcoded fake user id (`54cf3f84-ef0b-47e7-9480-a6e5d0be9052`) wherever an authenticated user would normally be used (controllers, audit interceptor).
 
@@ -42,6 +44,7 @@ Reverse proxy built on `Yarp.ReverseProxy`, and the single entry point for clien
   |---|---|---|
   | `user-vehicles-route` | `/api/user-vehicles/{**catch-all}` | `http://localhost:5077/` |
   | `vehicles-catalog-route` | `/api/vehicles-catalog/{**catch-all}` | `http://localhost:4000/` |
+  | `media-route` | `/api/media/{**catch-all}` | `http://localhost:5248/` |
 
 - Dev URLs: `http://localhost:5102`, `https://localhost:7080`.
 
@@ -160,6 +163,64 @@ Implementation checks MongoDB first; on a miss it fetches from the VIN decoder A
 
 ---
 
+## AutoWise.Media
+
+Handles file uploads (images, videos, PDFs — allowed types configurable) and associates them with a parent entity elsewhere in the system (e.g. a `UserVehicle`). Built with the same **Clean Architecture** layering as UserVehicles, chosen specifically so the storage backend can be swapped without touching Application/Domain:
+
+```
+AutoWise.Media.API             — Controllers, Program.cs, DI wiring
+AutoWise.Media.Application      — MediaAttachmentService, DTOs, storage/DB port interfaces
+AutoWise.Media.Domain           — MediaFile, MediaAttachment, MediaStorageProvider enum
+AutoWise.Media.Infrastructure   — EF Core DbContext, migrations, storage provider implementations
+AutoWise.Media.Tests            — xUnit
+```
+
+**Stack**: ASP.NET Core (.NET 10), EF Core 10 + `Npgsql.EntityFrameworkCore.PostgreSQL` (PostgreSQL), `Scalar.AspNetCore` + OpenAPI.
+
+### Domain
+
+- `MediaFile` (`CreatedAuditBaseEntity`) — the content-addressed, deduplicated file record: `ContentHash` (SHA-256 hex, unique), `ContentType`, `FileExtension`, `SizeInBytes`, `StorageProvider` (which backend holds the bytes), `StorageKey`. Generates its own `Id` client-side (`Guid.NewGuid()`, unlike every other entity in the codebase) specifically so a new `MediaFile` and its first `MediaAttachment` can be persisted together in one `SaveChangesAsync` call.
+- `MediaAttachment` (`CreatedAuditBaseEntity`) — one upload *request*: `MediaFileId`, `ParentType` (string, e.g. `"UserVehicle"` — deliberately not an enum, so Media doesn't need to know about every consumer's domain types) + `ParentEntityId`, `OriginalFileName`. Many `MediaAttachment`s can point at the same `MediaFile`.
+
+### Deduplication
+
+Uploads are hashed (SHA-256) before being written to storage. If a `MediaFile` with that hash already exists, the upload skips the storage write entirely and just creates a new `MediaAttachment` pointing at the existing file — so ten uploads of the same bytes under different names create one `MediaFile` and ten `MediaAttachment`s. Deleting an attachment is reference-counted: the physical file and its `MediaFile` row are only removed once the last referencing `MediaAttachment` is gone.
+
+### API endpoints (`[Route("api")]`)
+
+**`MediaAttachmentController`**
+| Verb | Route | Purpose |
+|---|---|---|
+| POST | `api/media` | Upload a file (`multipart/form-data`: file + `ParentType` + `ParentEntityId`) |
+| GET | `api/media/{id:guid}` | Get attachment metadata |
+| DELETE | `api/media/{id:guid}` | Delete an attachment (reference-counted) |
+
+### Persistence
+
+- `MediaDbContext` — PostgreSQL via EF Core, same `ConfigureDatabaseWithSchema` pattern as UserVehicles.
+- Connection string: `ConnectionStrings:PostgreSQL` (blank in source control — via user secrets).
+- Migrations auto-applied on startup; current migration: `InitialCreate`.
+
+### Pluggable storage
+
+- `IFileStorageProvider` (Application port) — `SaveAsync`/`OpenReadAsync`/`DeleteAsync`/`ExistsAsync` by `storageKey`.
+- `IFileStorageProviderResolver` — maps a `MediaStorageProvider` enum value to the matching concrete provider (`IEnumerable<IFileStorageProvider>` resolved via DI); also exposes `ResolveActiveProvider()`, which reads `Storage:ActiveProvider` from config so Application never needs to know about Infrastructure-level settings.
+- `LocalDiskStorageProvider` — fully implemented, writes/reads relative to `Storage:LocalDisk:RootPath`.
+- `AmazonS3StorageProvider` — registered but not yet implemented (`NotImplementedException` stub); `Storage:AmazonS3` config (bucket/region/credentials) is already in place for when it's built.
+- Switching `Storage:ActiveProvider` only changes where *new* uploads go — the resolver still looks up whichever provider a given `MediaFile.StorageProvider` says it was actually saved under, so old files stay readable after a switch.
+
+### Tests
+
+xUnit + FluentAssertions + NSubstitute + EFCore.InMemory — domain invariant tests (`MediaFileTests`, `MediaAttachmentTests`) and application-service tests (`MediaAttachmentServiceTests`) covering the dedup path, reference-counted delete, and not-found cases, against an in-memory `MediaDbContext` and substituted storage provider/resolver.
+
+### Known gaps
+
+- No RabbitMQ publish yet — the planned event to `AutoWise.UserVehicles` (to record a `UserVehicleAttachment`) isn't implemented.
+- `AmazonS3StorageProvider` is a stub.
+- No Dockerfile yet (consistent with UserVehicles and the gateway; only VehiclesCatalog has one currently).
+
+---
+
 ## AutoWise.CommonUtilities
 
 Shared class libraries, not a runnable service:
@@ -181,8 +242,9 @@ Shared class libraries, not a runnable service:
 
 | Service | HTTP | HTTPS | Depends on |
 |---|---|---|---|
-| YarpApiGateway | `:5102` | `:7080` | UserVehicles + VehiclesCatalog running |
+| YarpApiGateway | `:5102` | `:7080` | UserVehicles + VehiclesCatalog + Media running |
 | UserVehicles.API | `:5077` | `:7279` | PostgreSQL, Redis, VehiclesCatalog (gRPC) |
 | VehiclesCatalog.API | `:4000` | `:4040` | MongoDB, Redis, vindecoder.eu API key |
+| Media.API | `:5248` | `:7037` | PostgreSQL, local disk (or S3, once implemented) |
 
 Each service needs its own secrets configured (PostgreSQL connection string, VIN decoder API credentials) via `dotnet user-secrets` in Development — the checked-in `appsettings.json` files leave these blank intentionally.

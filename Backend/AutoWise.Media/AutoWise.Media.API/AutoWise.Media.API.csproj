@@ -14,6 +14,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.OpenApi" Version="2.10.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.16.13" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <Reference Include="AutoWise.CommonUtilities.Exceptions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
