@@ -1,11 +1,16 @@
-﻿using AutoWise.CommonUtilities.Persistence.PostgreSQL.Interceptors;
+﻿using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
+using AutoWise.CommonUtilities.Persistence.PostgreSQL.Interceptors;
 using AutoWise.Media.Application.Data;
 using AutoWise.Media.Application.Storage;
 using AutoWise.Media.Infrastructure.Data;
 using AutoWise.Media.Infrastructure.Storage;
 using AutoWise.Media.Infrastructure.Storage.Config;
+using Azure.Storage.Blobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Options;
 
 namespace AutoWise.Media.Infrastructure.Extensions;
 
@@ -30,10 +35,30 @@ public static class DependencyInjectionExtensions
         services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
         services.Configure<LocalDiskStorageOptions>(configuration.GetSection(LocalDiskStorageOptions.SectionName));
         services.Configure<AmazonS3StorageOptions>(configuration.GetSection(AmazonS3StorageOptions.SectionName));
+        services.Configure<AzureBlobStorageOptions>(configuration.GetSection(AzureBlobStorageOptions.SectionName));
 
         services.AddSingleton<IFileStorageProviderResolver, FileStorageProviderResolver>();
         services.AddSingleton<IFileStorageProvider, LocalDiskStorageProvider>();
         services.AddSingleton<IFileStorageProvider, AmazonS3StorageProvider>();
+        services.AddSingleton<IFileStorageProvider, AzureBlobStorageProvider>();
+
+        services.AddSingleton<IAmazonS3>(sp =>
+        {
+            var s3Options = sp.GetRequiredService<IOptions<AmazonS3StorageOptions>>().Value;
+            var credentials = new BasicAWSCredentials(s3Options.AccessKey, s3Options.SecretKey);
+            var config = new AmazonS3Config
+            {
+                RegionEndpoint = RegionEndpoint.GetBySystemName(s3Options.Region)
+            };
+
+            return new AmazonS3Client(credentials, config);
+        });
+
+        services.AddSingleton(sp =>
+        {
+            var blobOptions = sp.GetRequiredService<IOptions<AzureBlobStorageOptions>>().Value;
+            return new BlobServiceClient(blobOptions.ConnectionString);
+        });
 
         return services;
     }

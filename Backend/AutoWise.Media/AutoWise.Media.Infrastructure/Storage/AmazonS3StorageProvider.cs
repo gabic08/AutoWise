@@ -1,29 +1,49 @@
-﻿using AutoWise.Media.Application.Storage;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
+using AutoWise.Media.Application.Storage;
 using AutoWise.Media.Domain.Enums;
+using AutoWise.Media.Infrastructure.Storage.Config;
+using Microsoft.Extensions.Options;
 
 namespace AutoWise.Media.Infrastructure.Storage;
 
-public class AmazonS3StorageProvider : IFileStorageProvider
+public class AmazonS3StorageProvider(IAmazonS3 s3Client, IOptions<AmazonS3StorageOptions> options)
+    : IFileStorageProvider
 {
     public MediaStorageProvider ProviderType => MediaStorageProvider.AmazonS3;
 
-    public Task SaveAsync(Stream content, string storageKey, CancellationToken ct = default)
+    public async Task SaveAsync(Stream content, string storageKey, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var request = new PutObjectRequest
+        {
+            BucketName = options.Value.BucketName,
+            Key = storageKey,
+            InputStream = content
+        };
+
+        await s3Client.PutObjectAsync(request, ct);
     }
 
-    public Task<Stream> OpenReadAsync(string storageKey, CancellationToken ct = default)
+    public async Task<Stream> OpenReadAsync(string storageKey, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var request = new GetObjectRequest
+        {
+            BucketName = options.Value.BucketName,
+            Key = storageKey
+        };
+
+        var response = await s3Client.GetObjectAsync(request, ct);
+        return response.ResponseStream;
     }
 
-    public Task DeleteAsync(string storageKey, CancellationToken ct = default)
+    public async Task DeleteAsync(string storageKey, CancellationToken ct = default)
     {
-        throw new NotImplementedException();
-    }
+        var request = new DeleteObjectRequest
+        {
+            BucketName = options.Value.BucketName,
+            Key = storageKey
+        };
 
-    public Task<bool> ExistsAsync(string storageKey, CancellationToken ct = default)
-    {
-        throw new NotImplementedException();
+        await s3Client.DeleteObjectAsync(request, ct);
     }
 }

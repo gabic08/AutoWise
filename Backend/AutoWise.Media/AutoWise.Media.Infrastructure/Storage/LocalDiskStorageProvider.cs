@@ -40,11 +40,6 @@ public class LocalDiskStorageProvider(IOptions<LocalDiskStorageOptions> options)
         return Task.CompletedTask;
     }
 
-    public Task<bool> ExistsAsync(string storageKey, CancellationToken ct = default)
-    {
-        return Task.FromResult(File.Exists(GetFullPath(storageKey)));
-    }
-
     private string GetFullPath(string storageKey)
     {
         var rootPath = options.Value.RootPath;

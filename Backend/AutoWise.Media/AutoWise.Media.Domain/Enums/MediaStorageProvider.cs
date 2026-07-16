@@ -3,5 +3,6 @@
 public enum MediaStorageProvider
 {
     LocalDisk,
-    AmazonS3
+    AmazonS3,
+    AzureBlob
 }

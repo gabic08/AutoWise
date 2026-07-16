@@ -26,6 +26,13 @@ public class MediaAttachmentController(IMediaAttachmentService mediaAttachmentSe
         return Ok(await _mediaAttachmentService.GetByIdAsync(id, cancellationToken));
     }
 
+    [HttpGet("media/{id:guid}/content")]
+    public async Task<IActionResult> DownloadAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _mediaAttachmentService.DownloadAsync(id, cancellationToken);
+        return File(result.Content, result.ContentType, result.FileName);
+    }
+
     [HttpDelete("media/{id:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {

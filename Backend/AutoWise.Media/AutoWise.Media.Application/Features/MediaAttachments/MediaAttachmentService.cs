@@ -55,6 +55,20 @@ public partial class MediaAttachmentService(
             attachment.ParentEntityId);
     }
 
+    public async Task<MediaDownloadResult> DownloadAsync(Guid id, CancellationToken ct = default)
+    {
+        var attachment = await dbContext.MediaAttachments
+            .AsNoTracking()
+            .Include(ma => ma.MediaFile)
+            .FirstOrDefaultAsync(ma => ma.Id == id, ct)
+            ?? throw new NotFoundException($"Media attachment with id '{id}' was not found.");
+
+        var provider = storageProviderResolver.Resolve(attachment.MediaFile.StorageProvider);
+        var content = await provider.OpenReadAsync(attachment.MediaFile.StorageKey, ct);
+
+        return new MediaDownloadResult(content, attachment.MediaFile.ContentType, attachment.OriginalFileName);
+    }
+
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)
     {
         var attachment = await dbContext.MediaAttachments.FirstOrDefaultAsync(ma => ma.Id == id, ct)
