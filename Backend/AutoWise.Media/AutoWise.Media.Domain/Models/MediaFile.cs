@@ -41,10 +41,6 @@ public class MediaFile : CreatedAuditBaseEntity
         {
             throw new ArgumentException("Content hash is required.", nameof(contentHash));
         }
-        if (contentHash.Length != 64)
-        {
-            throw new ArgumentOutOfRangeException(nameof(contentHash), "Content hash must be a 64-character SHA-256 hex string.");
-        }
         ContentHash = contentHash.Trim().ToLowerInvariant();
     }
 

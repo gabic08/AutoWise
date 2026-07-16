@@ -13,7 +13,6 @@ public class MediaFileConfiguration : CreatedAuditEntityConfiguration<MediaFile>
         builder.ToTable(nameof(MediaFile), InfrastructureDataConstants.MediaSchema);
 
         builder.Property(mf => mf.ContentHash)
-            .HasMaxLength(64)
             .IsRequired();
         builder.HasIndex(mf => mf.ContentHash).IsUnique();
 

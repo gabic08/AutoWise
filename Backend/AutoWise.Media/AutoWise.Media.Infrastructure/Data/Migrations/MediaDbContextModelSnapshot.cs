@@ -68,8 +68,7 @@ namespace AutoWise.Media.Infrastructure.Data.Migrations
 
                     b.Property<string>("ContentHash")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ContentType")
                         .IsRequired()

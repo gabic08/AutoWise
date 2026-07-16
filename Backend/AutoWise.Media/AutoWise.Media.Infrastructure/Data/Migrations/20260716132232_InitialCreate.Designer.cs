@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AutoWise.Media.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MediaDbContext))]
-    [Migration("20260715114727_InitialCreate")]
+    [Migration("20260716132232_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -71,8 +71,7 @@ namespace AutoWise.Media.Infrastructure.Data.Migrations
 
                     b.Property<string>("ContentHash")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ContentType")
                         .IsRequired()

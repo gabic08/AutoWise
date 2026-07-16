@@ -20,7 +20,7 @@ namespace AutoWise.Media.Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    ContentHash = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    ContentHash = table.Column<string>(type: "text", nullable: false),
                     ContentType = table.Column<string>(type: "text", nullable: false),
                     FileExtension = table.Column<string>(type: "text", nullable: false),
                     SizeInBytes = table.Column<long>(type: "bigint", nullable: false),
