@@ -20,7 +20,10 @@ public class MediaFile : CreatedAuditBaseEntity
 
     public static MediaFile Create(string contentHash, string contentType, string fileExtension, long sizeInBytes, MediaStorageProvider storageProvider, string storageKey)
     {
-        var mediaFile = new MediaFile();
+        var mediaFile = new MediaFile
+        {
+            Id = Guid.NewGuid()
+        };
 
         mediaFile.SetContentHash(contentHash);
         mediaFile.SetContentType(contentType);

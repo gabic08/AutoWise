@@ -16,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="AutoWise.CommonUtilities.Exceptions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Models">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
+    </Reference>
     <Reference Include="AutoWise.CommonUtilities.Persistence.Abstractions">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Persistence.Abstractions.dll</HintPath>
     </Reference>
