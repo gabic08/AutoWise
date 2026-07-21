@@ -1,4 +1,5 @@
-﻿using AutoWise.CommonUtilities.Persistence.PostgreSQL.Context;
+﻿using AutoWise.CommonUtilities.Messaging.MassTransit.Extensions;
+using AutoWise.CommonUtilities.Persistence.PostgreSQL.Context;
 using AutoWise.Media.Application.Data;
 using AutoWise.Media.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,5 +14,6 @@ public class MediaDbContext(DbContextOptions<MediaDbContext> options) : DbContex
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ConfigureDatabaseWithSchema(InfrastructureDataConstants.MediaSchema);
+        modelBuilder.AddMassTransitInboxOutboxEntities();
     }
 }

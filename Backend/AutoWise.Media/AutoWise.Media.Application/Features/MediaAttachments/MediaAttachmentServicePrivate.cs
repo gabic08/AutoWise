@@ -6,7 +6,7 @@ namespace AutoWise.Media.Application.Features.MediaAttachments;
 
 public partial class MediaAttachmentService
 {
-    private async Task<Guid> SaveNewMediaFileAsync(UploadMediaRequest request, string contentHash, CancellationToken ct)
+    private async Task<MediaFile> SaveNewMediaFileAsync(UploadMediaRequest request, string contentHash, CancellationToken ct)
     {
         var fileExtension = Path.GetExtension(request.FileName).TrimStart('.');
         var storageKey = $"{contentHash[..2]}/{contentHash[2..4]}/{contentHash}.{fileExtension}";
@@ -19,7 +19,7 @@ public partial class MediaAttachmentService
 
         await dbContext.MediaFiles.AddAsync(mediaFile, ct);
 
-        return mediaFile.Id;
+        return mediaFile;
     }
 
     private static async Task<string> ComputeHashAsync(Stream content, CancellationToken ct)

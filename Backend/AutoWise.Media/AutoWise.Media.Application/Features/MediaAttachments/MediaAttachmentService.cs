@@ -1,4 +1,6 @@
 ﻿using AutoWise.CommonUtilities.Exceptions;
+using AutoWise.CommonUtilities.Messaging.Abstractions;
+using AutoWise.CommonUtilities.Messaging.Contracts.Media;
 using AutoWise.Media.Application.Config;
 using AutoWise.Media.Application.Data;
 using AutoWise.Media.Application.Dtos;
@@ -12,7 +14,8 @@ namespace AutoWise.Media.Application.Features.MediaAttachments;
 public partial class MediaAttachmentService(
     IMediaDbContext dbContext,
     IFileStorageProviderResolver storageProviderResolver,
-    IOptions<MediaUploadOptions> mediaUploadOptions)
+    IOptions<MediaUploadOptions> mediaUploadOptions,
+    IEventPublisher eventPublisher)
     : IMediaAttachmentService
 {
     public async Task<Guid> UploadAsync(UploadMediaRequest request, CancellationToken ct = default)
@@ -28,11 +31,21 @@ public partial class MediaAttachmentService(
             .AsNoTracking()
             .FirstOrDefaultAsync(mf => mf.ContentHash == contentHash, ct);
 
-        var mediaFileId = existingMediaFile?.Id ?? await SaveNewMediaFileAsync(request, contentHash, ct);
+        var mediaFile = existingMediaFile ?? await SaveNewMediaFileAsync(request, contentHash, ct);
 
-        var mediaAttachment = MediaAttachment.Create(mediaFileId, request.ParentType, request.ParentEntityId, request.FileName);
+        var mediaAttachment = MediaAttachment.Create(mediaFile.Id, request.ParentType, request.ParentEntityId, request.FileName);
 
         await dbContext.MediaAttachments.AddAsync(mediaAttachment, ct);
+
+        await eventPublisher.PublishAsync(new MediaAttachmentUploaded(
+            mediaAttachment.Id,
+            mediaAttachment.ParentType,
+            mediaAttachment.ParentEntityId,
+            mediaAttachment.OriginalFileName,
+            mediaFile.ContentType,
+            mediaFile.SizeInBytes),
+            ct);
+
         await dbContext.SaveChangesAsync(ct);
 
         return mediaAttachment.Id;

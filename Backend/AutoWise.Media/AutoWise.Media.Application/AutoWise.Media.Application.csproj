@@ -19,6 +19,12 @@
     <Reference Include="AutoWise.CommonUtilities.Exceptions">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
     </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Messaging.Abstractions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Messaging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Messaging.Contracts">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Messaging.Contracts.dll</HintPath>
+    </Reference>
     <Reference Include="AutoWise.CommonUtilities.Models">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
     </Reference>

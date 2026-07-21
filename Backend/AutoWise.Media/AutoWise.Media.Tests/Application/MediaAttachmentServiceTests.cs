@@ -1,4 +1,6 @@
 using AutoWise.CommonUtilities.Exceptions;
+using AutoWise.CommonUtilities.Messaging.Abstractions;
+using AutoWise.CommonUtilities.Messaging.Contracts.Media;
 using AutoWise.Media.Application.Config;
 using AutoWise.Media.Application.Dtos;
 using AutoWise.Media.Application.Features.MediaAttachments;
@@ -42,13 +44,19 @@ public class MediaAttachmentServiceTests
         return new UploadMediaRequest(stream, contentType, fileName, ParentType, ParentEntityId);
     }
 
+    private static IEventPublisher CreateEventPublisher()
+    {
+        return Substitute.For<IEventPublisher>();
+    }
+
     [Fact]
     public async Task UploadAsync_WithDisallowedContentType_ThrowsBadRequestException()
     {
         // Arrange
         await using var dbContext = InMemoryMediaDbContext.Create();
         var (resolver, _) = CreateStorage();
-        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("application/pdf"));
+        var eventPublisher = CreateEventPublisher();
+        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("application/pdf"), eventPublisher);
         var request = CreateRequest(contentType: "image/png");
 
         // Act
@@ -64,7 +72,8 @@ public class MediaAttachmentServiceTests
         // Arrange
         await using var dbContext = InMemoryMediaDbContext.Create();
         var (resolver, provider) = CreateStorage();
-        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"));
+        var eventPublisher = CreateEventPublisher();
+        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"), eventPublisher);
         var request = CreateRequest();
 
         // Act
@@ -83,6 +92,16 @@ public class MediaAttachmentServiceTests
         mediaFile.Should().NotBeNull();
         mediaFile!.ContentType.Should().Be("text/plain");
         mediaFile.StorageProvider.Should().Be(MediaStorageProvider.LocalDisk);
+
+        await eventPublisher.Received(1).PublishAsync(
+            Arg.Is<MediaAttachmentUploaded>(e =>
+                e.MediaAttachmentId == attachmentId &&
+                e.ParentType == ParentType &&
+                e.ParentEntityId == ParentEntityId &&
+                e.OriginalFileName == "note.txt" &&
+                e.ContentType == "text/plain" &&
+                e.SizeInBytes == mediaFile.SizeInBytes),
+            Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -91,7 +110,8 @@ public class MediaAttachmentServiceTests
         // Arrange
         await using var dbContext = InMemoryMediaDbContext.Create();
         var (resolver, provider) = CreateStorage();
-        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"));
+        var eventPublisher = CreateEventPublisher();
+        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"), eventPublisher);
 
         var firstAttachmentId = await sut.UploadAsync(CreateRequest(fileName: "first.txt"));
 
@@ -114,7 +134,8 @@ public class MediaAttachmentServiceTests
         // Arrange
         await using var dbContext = InMemoryMediaDbContext.Create();
         var (resolver, _) = CreateStorage();
-        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"));
+        var eventPublisher = CreateEventPublisher();
+        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"), eventPublisher);
         var attachmentId = await sut.UploadAsync(CreateRequest());
 
         // Act
@@ -134,7 +155,8 @@ public class MediaAttachmentServiceTests
         // Arrange
         await using var dbContext = InMemoryMediaDbContext.Create();
         var (resolver, _) = CreateStorage();
-        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"));
+        var eventPublisher = CreateEventPublisher();
+        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"), eventPublisher);
 
         // Act
         Func<Task> act = () => sut.GetByIdAsync(Guid.NewGuid());
@@ -149,7 +171,8 @@ public class MediaAttachmentServiceTests
         // Arrange
         await using var dbContext = InMemoryMediaDbContext.Create();
         var (resolver, _) = CreateStorage();
-        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"));
+        var eventPublisher = CreateEventPublisher();
+        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"), eventPublisher);
 
         // Act
         Func<Task> act = () => sut.DeleteAsync(Guid.NewGuid());
@@ -164,7 +187,8 @@ public class MediaAttachmentServiceTests
         // Arrange
         await using var dbContext = InMemoryMediaDbContext.Create();
         var (resolver, provider) = CreateStorage();
-        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"));
+        var eventPublisher = CreateEventPublisher();
+        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"), eventPublisher);
         var attachmentId = await sut.UploadAsync(CreateRequest());
         var mediaFileId = (await dbContext.MediaAttachments.FindAsync(attachmentId))!.MediaFileId;
 
@@ -183,7 +207,8 @@ public class MediaAttachmentServiceTests
         // Arrange
         await using var dbContext = InMemoryMediaDbContext.Create();
         var (resolver, provider) = CreateStorage();
-        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"));
+        var eventPublisher = CreateEventPublisher();
+        var sut = new MediaAttachmentService(dbContext, resolver, CreateUploadOptions("text/plain"), eventPublisher);
         var firstAttachmentId = await sut.UploadAsync(CreateRequest(fileName: "first.txt"));
         var secondAttachmentId = await sut.UploadAsync(CreateRequest(fileName: "second.txt"));
         var mediaFileId = (await dbContext.MediaAttachments.FindAsync(firstAttachmentId))!.MediaFileId;

@@ -1,6 +1,8 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
+using AutoWise.CommonUtilities.Messaging.MassTransit;
+using AutoWise.CommonUtilities.Messaging.MassTransit.Extensions;
 using AutoWise.CommonUtilities.Persistence.PostgreSQL.Interceptors;
 using AutoWise.Media.Application.Data;
 using AutoWise.Media.Application.Storage;
@@ -20,6 +22,7 @@ public static class DependencyInjectionExtensions
     {
         services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
 
+        services.AddMassTransitMessaging<MediaDbContext>(configuration, OutboxDatabaseProvider.Postgres);
 
         services.AddDbContext<MediaDbContext>((sp, options) =>
         {
@@ -29,7 +32,8 @@ public static class DependencyInjectionExtensions
                 ?? throw new InvalidOperationException("Connection string 'PostgreSQL' not found.");
             options.UseNpgsql(connectionString);
         });
-        services.AddScoped<IMediaDbContext, MediaDbContext>();
+
+        services.AddScoped<IMediaDbContext>(sp => sp.GetRequiredService<MediaDbContext>());
 
 
         services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
