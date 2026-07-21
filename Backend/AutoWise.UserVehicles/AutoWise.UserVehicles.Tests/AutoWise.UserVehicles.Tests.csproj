@@ -20,14 +20,21 @@
   <ItemGroup>
     <ProjectReference Include="..\AutoWise.UserVehicles.Domain\AutoWise.UserVehicles.Domain.csproj" />
     <ProjectReference Include="..\AutoWise.UserVehicles.Application\AutoWise.UserVehicles.Application.csproj" />
+    <ProjectReference Include="..\AutoWise.UserVehicles.Infrastructure\AutoWise.UserVehicles.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="AutoWise.CommonUtilities.Exceptions">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
     </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Messaging.Contracts">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Messaging.Contracts.dll</HintPath>
+    </Reference>
     <Reference Include="AutoWise.CommonUtilities.Models">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Persistence.Abstractions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Persistence.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
 

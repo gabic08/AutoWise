@@ -1,9 +1,4 @@
-﻿using AutoWise.CommonUtilities.Persistence.PostgreSQL.Configurations;
-using AutoWise.UserVehicles.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace AutoWise.UserVehicles.Infrastructure.Data.Configurations;
+﻿namespace AutoWise.UserVehicles.Infrastructure.Data.Configurations;
 
 public class UserVehicleConfiguration : ModifiedCreatedAuditEntityConfiguration<UserVehicle>
 {
@@ -18,6 +13,11 @@ public class UserVehicleConfiguration : ModifiedCreatedAuditEntityConfiguration<
         builder.HasMany(uv => uv.UserVehicleEvents)
             .WithOne(uve => uve.UserVehicle)
             .HasForeignKey(uve => uve.UserVehicleId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(uv => uv.UserVehicleAttachments)
+            .WithOne(ua => ua.UserVehicle)
+            .HasForeignKey(ua => ua.UserVehicleId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

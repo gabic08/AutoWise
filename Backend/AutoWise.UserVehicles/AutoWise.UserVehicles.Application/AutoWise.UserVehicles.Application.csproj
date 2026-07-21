@@ -22,6 +22,9 @@
     <Reference Include="AutoWise.CommonUtilities.Models">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
     </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Persistence.Abstractions">
+      <HintPath>..\..\AutoWise.Media\Libraries\AutoWise.CommonUtilities.Persistence.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

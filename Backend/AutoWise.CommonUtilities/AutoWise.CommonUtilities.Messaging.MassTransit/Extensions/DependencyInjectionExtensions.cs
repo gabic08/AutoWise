@@ -47,6 +47,11 @@ public static class DependencyInjectionExtensions
 
             configureConsumers?.Invoke(x);
 
+            x.AddConfigureEndpointsCallback((context, name, cfg) =>
+            {
+                cfg.UseEntityFrameworkOutbox<TDbContext>(context);
+            });
+
             x.UsingRabbitMq((context, config) =>
             {
                 config.Host(new Uri(connectionString));

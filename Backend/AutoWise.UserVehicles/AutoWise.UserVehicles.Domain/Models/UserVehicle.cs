@@ -14,6 +14,9 @@ public class UserVehicle : ModifiedCreatedAuditBaseEntity
     private readonly List<UserVehicleEvent> _userVehicleEvents = [];
     public IReadOnlyCollection<UserVehicleEvent> UserVehicleEvents => _userVehicleEvents.AsReadOnly();
 
+    private readonly List<UserVehicleAttachment> _userVehicleAttachments = [];
+    public IReadOnlyCollection<UserVehicleAttachment> UserVehicleAttachments => _userVehicleAttachments.AsReadOnly();
+
     private UserVehicle() { }
 
     public static UserVehicle Create(Guid userId, string licensePlateNumber, string make, string model, string vin, int? year)
@@ -103,5 +106,13 @@ public class UserVehicle : ModifiedCreatedAuditBaseEntity
             ?? throw new InvalidOperationException($"Vehicle event with id '{eventId}' does not belong to this vehicle.");
 
         _userVehicleEvents.Remove(vehicleEvent);
+    }
+
+    public UserVehicleAttachment AddAttachment(Guid mediaAttachmentId, string originalFileName, string contentType, long sizeInBytes)
+    {
+        var attachment = UserVehicleAttachment.Create(Id, mediaAttachmentId, originalFileName, contentType, sizeInBytes);
+        _userVehicleAttachments.Add(attachment);
+
+        return attachment;
     }
 }

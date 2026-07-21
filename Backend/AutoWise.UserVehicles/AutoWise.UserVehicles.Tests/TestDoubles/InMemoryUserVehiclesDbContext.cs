@@ -9,6 +9,7 @@ public class InMemoryUserVehiclesDbContext(DbContextOptions<InMemoryUserVehicles
 {
     public DbSet<UserVehicle> UserVehicles => Set<UserVehicle>();
     public DbSet<UserVehicleEvent> UserVehicleEvents => Set<UserVehicleEvent>();
+    public DbSet<UserVehicleAttachment> UserVehicleAttachments => Set<UserVehicleAttachment>();
 
     public static InMemoryUserVehiclesDbContext Create()
     {

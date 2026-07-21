@@ -1,7 +1,3 @@
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-
 namespace AutoWise.UserVehicles.API.Controllers;
 
 [Route("api")]

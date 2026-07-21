@@ -1,0 +1,8 @@
+﻿global using AutoWise.CommonUtilities.Exceptions;
+global using AutoWise.CommonUtilities.Persistence.Abstractions;
+global using AutoWise.UserVehicles.Application.Data;
+global using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
+global using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
+global using AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
+global using AutoWise.UserVehicles.Domain.Models;
+global using Microsoft.EntityFrameworkCore;

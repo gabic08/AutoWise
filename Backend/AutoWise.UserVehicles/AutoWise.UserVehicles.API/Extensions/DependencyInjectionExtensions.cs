@@ -1,6 +1,4 @@
-﻿using AutoWise.CommonUtilities.Exceptions.Handler;
-
-namespace AutoWise.UserVehicles.API.Extensions;
+﻿namespace AutoWise.UserVehicles.API.Extensions;
 
 public static class DependencyInjectionExtensions
 {

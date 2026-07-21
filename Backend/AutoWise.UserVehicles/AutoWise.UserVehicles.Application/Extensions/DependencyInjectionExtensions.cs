@@ -1,7 +1,4 @@
-﻿using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
-
-namespace AutoWise.UserVehicles.Application.Extensions;
+﻿namespace AutoWise.UserVehicles.Application.Extensions;
 
 public static class DependencyInjectionExtensions
 {

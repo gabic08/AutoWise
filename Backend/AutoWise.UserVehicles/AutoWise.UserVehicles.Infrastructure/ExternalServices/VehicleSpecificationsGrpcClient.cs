@@ -1,10 +1,4 @@
-﻿using AutoWise.CommonUtilities.Exceptions;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
-using AutoWise.VehiclesCatalog.API.Grpc;
-using Grpc.Core;
-
-namespace AutoWise.UserVehicles.Infrastructure.ExternalServices;
+﻿namespace AutoWise.UserVehicles.Infrastructure.ExternalServices;
 
 public class VehicleSpecificationsGrpcClient : IVehicleSpecificationsService
 {

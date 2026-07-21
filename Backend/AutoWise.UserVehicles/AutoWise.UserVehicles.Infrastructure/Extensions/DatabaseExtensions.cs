@@ -1,7 +1,4 @@
-﻿using AutoWise.UserVehicles.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace AutoWise.UserVehicles.Infrastructure.Extensions;
+﻿namespace AutoWise.UserVehicles.Infrastructure.Extensions;
 
 public static class DatabaseExtensions
 {

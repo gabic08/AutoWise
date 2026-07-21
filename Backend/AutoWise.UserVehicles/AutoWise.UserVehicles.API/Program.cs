@@ -1,7 +1,3 @@
-using AutoWise.UserVehicles.API.Extensions;
-using AutoWise.UserVehicles.Application.Extensions;
-using AutoWise.UserVehicles.Infrastructure.Extensions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 if (builder.Environment.IsDevelopment())

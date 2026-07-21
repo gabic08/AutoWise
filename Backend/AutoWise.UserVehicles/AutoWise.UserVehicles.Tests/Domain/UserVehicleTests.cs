@@ -22,6 +22,7 @@ public class UserVehicleTests
         vehicle.Vin.Should().Be(ValidVin);
         vehicle.Year.Should().Be(2020);
         vehicle.UserVehicleEvents.Should().BeEmpty();
+        vehicle.UserVehicleAttachments.Should().BeEmpty();
     }
 
     [Theory]
@@ -156,5 +157,25 @@ public class UserVehicleTests
 
         // Assert
         act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void AddAttachment_AddsAttachmentToCollection()
+    {
+        // Arrange
+        var vehicle = UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
+        var mediaAttachmentId = Guid.NewGuid();
+
+        // Act
+        var addedAttachment = vehicle.AddAttachment(mediaAttachmentId, "invoice.pdf", "application/pdf", 2048);
+
+        // Assert
+        vehicle.UserVehicleAttachments.Should().ContainSingle();
+        vehicle.UserVehicleAttachments.Single().Should().BeSameAs(addedAttachment);
+        addedAttachment.UserVehicleId.Should().Be(vehicle.Id);
+        addedAttachment.MediaAttachmentId.Should().Be(mediaAttachmentId);
+        addedAttachment.OriginalFileName.Should().Be("invoice.pdf");
+        addedAttachment.ContentType.Should().Be("application/pdf");
+        addedAttachment.SizeInBytes.Should().Be(2048);
     }
 }

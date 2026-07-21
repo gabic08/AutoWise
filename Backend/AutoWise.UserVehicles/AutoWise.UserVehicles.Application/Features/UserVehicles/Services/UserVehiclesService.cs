@@ -1,11 +1,4 @@
-﻿using AutoWise.CommonUtilities.Exceptions;
-using AutoWise.UserVehicles.Application.Data;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
-using AutoWise.UserVehicles.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
+﻿namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
 
 public class UserVehiclesService(IUserVehiclesDbContext dbContext, IVehicleSpecificationsService vehicleSpecificationsService)
     : IUserVehiclesService

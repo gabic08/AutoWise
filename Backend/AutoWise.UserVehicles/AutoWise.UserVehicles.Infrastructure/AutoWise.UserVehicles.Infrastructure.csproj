@@ -9,6 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.80.0" />
+    <PackageReference Include="MassTransit" Version="8.5.10" />
+    <PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.5.10" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
       <PrivateAssets>all</PrivateAssets>
@@ -30,6 +33,15 @@
   <ItemGroup>
     <Reference Include="AutoWise.CommonUtilities.Exceptions">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.ExtensionMethods">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.ExtensionMethods.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Messaging.Contracts">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Messaging.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Messaging.MassTransit">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Messaging.MassTransit.dll</HintPath>
     </Reference>
     <Reference Include="AutoWise.CommonUtilities.Models">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>

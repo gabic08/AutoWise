@@ -1,6 +1,4 @@
-﻿using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
-
-namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
+﻿namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
 
 public interface IUserVehicleEventService
 {

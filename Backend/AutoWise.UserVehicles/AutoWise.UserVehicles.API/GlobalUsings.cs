@@ -1,1 +1,0 @@
-﻿global using Scalar.AspNetCore;
