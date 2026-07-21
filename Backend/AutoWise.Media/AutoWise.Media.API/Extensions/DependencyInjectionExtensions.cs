@@ -1,6 +1,4 @@
-﻿using AutoWise.CommonUtilities.Exceptions.Handler;
-
-namespace AutoWise.Media.API.Extensions;
+﻿namespace AutoWise.Media.API.Extensions;
 
 public static class DependencyInjectionExtensions
 {

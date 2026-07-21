@@ -1,11 +1,4 @@
-﻿using Amazon.S3;
-using Amazon.S3.Model;
-using AutoWise.Media.Application.Storage;
-using AutoWise.Media.Domain.Enums;
-using AutoWise.Media.Infrastructure.Storage.Config;
-using Microsoft.Extensions.Options;
-
-namespace AutoWise.Media.Infrastructure.Storage;
+﻿namespace AutoWise.Media.Infrastructure.Storage;
 
 public class AmazonS3StorageProvider(IAmazonS3 s3Client, IOptions<AmazonS3StorageOptions> options)
     : IFileStorageProvider

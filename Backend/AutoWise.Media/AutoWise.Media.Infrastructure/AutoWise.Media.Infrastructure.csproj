@@ -29,6 +29,9 @@
     <Reference Include="AutoWise.CommonUtilities.Exceptions">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
     </Reference>
+    <Reference Include="AutoWise.CommonUtilities.Messaging.Contracts">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Messaging.Contracts.dll</HintPath>
+    </Reference>
     <Reference Include="AutoWise.CommonUtilities.Messaging.MassTransit">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Messaging.MassTransit.dll</HintPath>
     </Reference>

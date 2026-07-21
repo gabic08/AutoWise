@@ -1,28 +1,10 @@
-﻿using Amazon;
-using Amazon.Runtime;
-using Amazon.S3;
-using AutoWise.CommonUtilities.Messaging.MassTransit;
-using AutoWise.CommonUtilities.Messaging.MassTransit.Extensions;
-using AutoWise.CommonUtilities.Persistence.PostgreSQL.Interceptors;
-using AutoWise.Media.Application.Data;
-using AutoWise.Media.Application.Storage;
-using AutoWise.Media.Infrastructure.Data;
-using AutoWise.Media.Infrastructure.Storage;
-using AutoWise.Media.Infrastructure.Storage.Config;
-using Azure.Storage.Blobs;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Options;
-
-namespace AutoWise.Media.Infrastructure.Extensions;
+﻿namespace AutoWise.Media.Infrastructure.Extensions;
 
 public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
-
-        services.AddMassTransitMessaging<MediaDbContext>(configuration, OutboxDatabaseProvider.Postgres);
 
         services.AddDbContext<MediaDbContext>((sp, options) =>
         {
@@ -34,6 +16,12 @@ public static class DependencyInjectionExtensions
         });
 
         services.AddScoped<IMediaDbContext>(sp => sp.GetRequiredService<MediaDbContext>());
+
+
+        services.AddMassTransitMessaging<MediaDbContext>(
+            configuration,
+            OutboxDatabaseProvider.Postgres,
+            x => x.AddConsumer<MediaAttachmentRemovedConsumer>());
 
 
         services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));

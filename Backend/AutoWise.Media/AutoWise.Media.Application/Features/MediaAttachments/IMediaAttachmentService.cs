@@ -1,6 +1,4 @@
-﻿using AutoWise.Media.Application.Dtos;
-
-namespace AutoWise.Media.Application.Features.MediaAttachments;
+﻿namespace AutoWise.Media.Application.Features.MediaAttachments;
 
 public interface IMediaAttachmentService
 {

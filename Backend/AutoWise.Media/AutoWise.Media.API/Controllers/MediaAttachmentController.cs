@@ -1,9 +1,4 @@
-﻿using AutoWise.Media.API.Requests;
-using AutoWise.Media.Application.Dtos;
-using AutoWise.Media.Application.Features.MediaAttachments;
-using Microsoft.AspNetCore.Mvc;
-
-namespace AutoWise.Media.API.Controllers;
+﻿namespace AutoWise.Media.API.Controllers;
 
 [Route("api")]
 [ApiController]

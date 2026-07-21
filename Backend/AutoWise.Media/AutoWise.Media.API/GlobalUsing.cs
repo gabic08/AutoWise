@@ -1,0 +1,9 @@
+﻿global using AutoWise.CommonUtilities.Exceptions.Handler;
+global using AutoWise.Media.API.Extensions;
+global using AutoWise.Media.API.Requests;
+global using AutoWise.Media.Application.Dtos;
+global using AutoWise.Media.Application.Extensions;
+global using AutoWise.Media.Application.Features.MediaAttachments;
+global using AutoWise.Media.Infrastructure.Extensions;
+global using Microsoft.AspNetCore.Mvc;
+global using Scalar.AspNetCore;

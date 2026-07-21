@@ -178,4 +178,31 @@ public class UserVehicleTests
         addedAttachment.ContentType.Should().Be("application/pdf");
         addedAttachment.SizeInBytes.Should().Be(2048);
     }
+
+    [Fact]
+    public void RemoveAttachment_WithExistingAttachmentId_RemovesFromCollection()
+    {
+        // Arrange
+        var vehicle = UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
+        var addedAttachment = vehicle.AddAttachment(Guid.NewGuid(), "invoice.pdf", "application/pdf", 2048);
+
+        // Act
+        vehicle.RemoveAttachment(addedAttachment.Id);
+
+        // Assert
+        vehicle.UserVehicleAttachments.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void RemoveAttachment_WithUnknownAttachmentId_ThrowsInvalidOperationException()
+    {
+        // Arrange
+        var vehicle = UserVehicle.Create(UserId, "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
+
+        // Act
+        var act = () => vehicle.RemoveAttachment(Guid.NewGuid());
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>();
+    }
 }

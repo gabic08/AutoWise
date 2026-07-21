@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AutoWise.Media.Application\AutoWise.Media.Application.csproj" />
     <ProjectReference Include="..\AutoWise.Media.Domain\AutoWise.Media.Domain.csproj" />
+    <ProjectReference Include="..\AutoWise.Media.Infrastructure\AutoWise.Media.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

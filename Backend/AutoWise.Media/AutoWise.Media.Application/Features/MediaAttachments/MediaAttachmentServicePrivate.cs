@@ -1,8 +1,4 @@
-﻿using AutoWise.Media.Application.Dtos;
-using AutoWise.Media.Domain.Models;
-using System.Security.Cryptography;
-
-namespace AutoWise.Media.Application.Features.MediaAttachments;
+﻿namespace AutoWise.Media.Application.Features.MediaAttachments;
 
 public partial class MediaAttachmentService
 {

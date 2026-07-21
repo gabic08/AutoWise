@@ -1,7 +1,4 @@
-﻿using AutoWise.Media.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-
-namespace AutoWise.Media.Infrastructure.Extensions;
+﻿namespace AutoWise.Media.Infrastructure.Extensions;
 
 public static class DatabaseExtensions
 {

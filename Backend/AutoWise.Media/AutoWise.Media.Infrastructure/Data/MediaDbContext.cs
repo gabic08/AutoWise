@@ -1,10 +1,4 @@
-﻿using AutoWise.CommonUtilities.Messaging.MassTransit.Extensions;
-using AutoWise.CommonUtilities.Persistence.PostgreSQL.Context;
-using AutoWise.Media.Application.Data;
-using AutoWise.Media.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace AutoWise.Media.Infrastructure.Data;
+﻿namespace AutoWise.Media.Infrastructure.Data;
 
 public class MediaDbContext(DbContextOptions<MediaDbContext> options) : DbContext(options), IMediaDbContext
 {

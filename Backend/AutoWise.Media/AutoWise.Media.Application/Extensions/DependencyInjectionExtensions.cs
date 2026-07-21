@@ -1,7 +1,4 @@
-﻿using AutoWise.Media.Application.Config;
-using AutoWise.Media.Application.Features.MediaAttachments;
-
-namespace AutoWise.Media.Application.Extensions;
+﻿namespace AutoWise.Media.Application.Extensions;
 
 public static class DependencyInjectionExtensions
 {

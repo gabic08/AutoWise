@@ -115,4 +115,14 @@ public class UserVehicle : ModifiedCreatedAuditBaseEntity
 
         return attachment;
     }
+
+    public UserVehicleAttachment RemoveAttachment(Guid attachmentId)
+    {
+        var attachment = _userVehicleAttachments.FirstOrDefault(a => a.Id == attachmentId)
+            ?? throw new InvalidOperationException($"Attachment with id '{attachmentId}' does not belong to this vehicle.");
+
+        _userVehicleAttachments.Remove(attachment);
+
+        return attachment;
+    }
 }

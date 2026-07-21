@@ -6,6 +6,7 @@ public static class DependencyInjectionExtensions
     {
         services.AddScoped<IUserVehiclesService, UserVehiclesService>();
         services.AddScoped<IUserVehicleEventService, UserVehicleEventService>();
+        services.AddScoped<IUserVehicleAttachmentService, UserVehicleAttachmentService>();
 
         return services;
     }

@@ -1,0 +1,14 @@
+﻿global using AutoWise.CommonUtilities.Exceptions;
+global using AutoWise.CommonUtilities.Messaging.Abstractions;
+global using AutoWise.CommonUtilities.Messaging.Contracts.Media;
+global using AutoWise.CommonUtilities.Persistence.Abstractions;
+global using AutoWise.Media.Application.Config;
+global using AutoWise.Media.Application.Data;
+global using AutoWise.Media.Application.Dtos;
+global using AutoWise.Media.Application.Features.MediaAttachments;
+global using AutoWise.Media.Application.Storage;
+global using AutoWise.Media.Domain.Enums;
+global using AutoWise.Media.Domain.Models;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Options;
+global using System.Security.Cryptography;

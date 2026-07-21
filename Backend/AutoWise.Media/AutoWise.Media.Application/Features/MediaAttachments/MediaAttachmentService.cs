@@ -1,15 +1,4 @@
-﻿using AutoWise.CommonUtilities.Exceptions;
-using AutoWise.CommonUtilities.Messaging.Abstractions;
-using AutoWise.CommonUtilities.Messaging.Contracts.Media;
-using AutoWise.Media.Application.Config;
-using AutoWise.Media.Application.Data;
-using AutoWise.Media.Application.Dtos;
-using AutoWise.Media.Application.Storage;
-using AutoWise.Media.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-
-namespace AutoWise.Media.Application.Features.MediaAttachments;
+﻿namespace AutoWise.Media.Application.Features.MediaAttachments;
 
 public partial class MediaAttachmentService(
     IMediaDbContext dbContext,

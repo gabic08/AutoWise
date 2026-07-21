@@ -1,10 +1,4 @@
-﻿using AutoWise.Media.Application.Storage;
-using AutoWise.Media.Domain.Enums;
-using AutoWise.Media.Infrastructure.Storage.Config;
-using Azure.Storage.Blobs;
-using Microsoft.Extensions.Options;
-
-namespace AutoWise.Media.Infrastructure.Storage;
+﻿namespace AutoWise.Media.Infrastructure.Storage;
 
 public class AzureBlobStorageProvider(BlobServiceClient blobServiceClient, IOptions<AzureBlobStorageOptions> options)
     : IFileStorageProvider

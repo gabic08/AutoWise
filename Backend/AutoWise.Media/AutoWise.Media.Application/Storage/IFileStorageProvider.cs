@@ -1,6 +1,4 @@
-﻿using AutoWise.Media.Domain.Enums;
-
-namespace AutoWise.Media.Application.Storage;
+﻿namespace AutoWise.Media.Application.Storage;
 
 public interface IFileStorageProvider
 {

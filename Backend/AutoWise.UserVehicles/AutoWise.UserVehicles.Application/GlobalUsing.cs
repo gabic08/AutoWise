@@ -1,4 +1,6 @@
 ﻿global using AutoWise.CommonUtilities.Exceptions;
+global using AutoWise.CommonUtilities.Messaging.Abstractions;
+global using AutoWise.CommonUtilities.Messaging.Contracts.Media;
 global using AutoWise.CommonUtilities.Persistence.Abstractions;
 global using AutoWise.UserVehicles.Application.Data;
 global using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;

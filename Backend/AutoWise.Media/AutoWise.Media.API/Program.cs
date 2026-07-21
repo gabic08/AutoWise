@@ -1,8 +1,3 @@
-using AutoWise.Media.API.Extensions;
-using AutoWise.Media.Application.Extensions;
-using AutoWise.Media.Infrastructure.Extensions;
-using Scalar.AspNetCore;
-
 var builder = WebApplication.CreateBuilder(args);
 
 if (builder.Environment.IsDevelopment())
