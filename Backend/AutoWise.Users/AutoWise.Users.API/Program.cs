@@ -1,4 +1,14 @@
+using AutoWise.Users.Infrastructure.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
+builder.Services
+    .AddInfrastructureServices(builder.Configuration);
 
 // Add services to the container.
 

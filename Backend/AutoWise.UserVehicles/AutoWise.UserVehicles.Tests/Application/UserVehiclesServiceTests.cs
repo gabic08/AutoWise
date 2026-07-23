@@ -1,7 +1,7 @@
 using AutoWise.CommonUtilities.Exceptions;
 using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
 using AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
+using AutoWise.UserVehicles.Application.Services.Interfaces;
 using AutoWise.UserVehicles.Domain.Models;
 using AutoWise.UserVehicles.Tests.TestDoubles;
 using FluentAssertions;

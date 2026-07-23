@@ -1,3 +1,3 @@
-﻿namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
+﻿namespace AutoWise.UserVehicles.Application.Dtos;
 
 public record CreateUserVehicleRequest(string Vin, string LicensePlateNumber);

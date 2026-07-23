@@ -1,4 +1,4 @@
-﻿namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Interfaces;
+﻿namespace AutoWise.UserVehicles.Application.Services.Interfaces;
 
 public interface IUserVehiclesService
 {

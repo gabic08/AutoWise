@@ -1,4 +1,4 @@
-﻿namespace AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
+﻿namespace AutoWise.UserVehicles.Application.Services;
 
 public class UserVehicleAttachmentService(IUserVehiclesDbContext dbContext, IEventPublisher eventPublisher)
     : IUserVehicleAttachmentService

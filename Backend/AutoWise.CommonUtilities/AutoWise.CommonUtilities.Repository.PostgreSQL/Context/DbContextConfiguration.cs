@@ -17,6 +17,13 @@ public static class DbContextConfiguration
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetCallingAssembly());
     }
 
+    public static async Task ApplyMigrationsAsync<TDbContext>(this WebApplication app) where TDbContext : DbContext
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        await context.Database.MigrateAsync();
+    }
+
     private static void ConfigureEntityConversionToUtc(this ModelBuilder modelBuilder)
     {
         // Apply UTC timestamp convention globally
