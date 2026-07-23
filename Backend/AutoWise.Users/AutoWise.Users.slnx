@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="AutoWise.Users.API/AutoWise.Users.API.csproj" />
+  <Project Path="AutoWise.Users.Application/AutoWise.Users.Application.csproj" />
+  <Project Path="AutoWise.Users.Domain/AutoWise.Users.Domain.csproj" />
+  <Project Path="AutoWise.Users.Infrastructure/AutoWise.Users.Infrastructure.csproj" />
+  <Project Path="AutoWise.Users.Tests/AutoWise.Users.Tests.csproj" />
+</Solution>
