@@ -1,0 +1,14 @@
+﻿global using AutoWise.CommonUtilities.Exceptions;
+global using AutoWise.CommonUtilities.Messaging.Abstractions;
+global using AutoWise.CommonUtilities.Messaging.Contracts.Media;
+global using AutoWise.UserVehicles.Application.Data;
+global using AutoWise.UserVehicles.Application.Dtos;
+global using AutoWise.UserVehicles.Application.Services;
+global using AutoWise.UserVehicles.Application.Services.Interfaces;
+global using AutoWise.UserVehicles.Domain.Models;
+global using AutoWise.UserVehicles.Infrastructure.Consumers;
+global using AutoWise.UserVehicles.Tests.TestDoubles;
+global using FluentAssertions;
+global using MassTransit;
+global using Microsoft.EntityFrameworkCore;
+global using NSubstitute;

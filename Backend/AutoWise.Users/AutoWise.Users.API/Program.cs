@@ -1,3 +1,5 @@
+using AutoWise.Users.API.Extensions;
+using AutoWise.Users.Application.Extensions;
 using AutoWise.Users.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,26 +10,19 @@ if (builder.Environment.IsDevelopment())
 }
 
 builder.Services
-    .AddInfrastructureServices(builder.Configuration);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+    .AddApplicationServices()
+    .AddInfrastructureServices(builder.Configuration)
+    .AddApiServices();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseApiServices();
+
+await app.ApplyMigrationsAsync();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
 
 app.Run();

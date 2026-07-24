@@ -1,7 +1,3 @@
-using AutoWise.UserVehicles.Application.Data;
-using AutoWise.UserVehicles.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-
 namespace AutoWise.UserVehicles.Tests.TestDoubles;
 
 public class InMemoryUserVehiclesDbContext(DbContextOptions<InMemoryUserVehiclesDbContext> options)

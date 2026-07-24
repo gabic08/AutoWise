@@ -1,13 +1,3 @@
-using AutoWise.CommonUtilities.Exceptions;
-using AutoWise.CommonUtilities.Messaging.Contracts.Media;
-using AutoWise.UserVehicles.Domain.Models;
-using AutoWise.UserVehicles.Infrastructure.Consumers;
-using AutoWise.UserVehicles.Tests.TestDoubles;
-using FluentAssertions;
-using MassTransit;
-using Microsoft.EntityFrameworkCore;
-using NSubstitute;
-
 namespace AutoWise.UserVehicles.Tests.Infrastructure.Consumers;
 
 public class MediaAttachmentUploadedConsumerTests

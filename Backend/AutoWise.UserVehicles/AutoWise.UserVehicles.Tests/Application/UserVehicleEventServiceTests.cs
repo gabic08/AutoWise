@@ -1,10 +1,3 @@
-using AutoWise.CommonUtilities.Exceptions;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Dtos;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
-using AutoWise.UserVehicles.Domain.Models;
-using AutoWise.UserVehicles.Tests.TestDoubles;
-using FluentAssertions;
-
 namespace AutoWise.UserVehicles.Tests.Application;
 
 public class UserVehicleEventServiceTests

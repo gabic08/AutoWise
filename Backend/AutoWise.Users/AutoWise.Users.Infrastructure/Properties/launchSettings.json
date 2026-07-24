@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "AutoWise.Users.Infrastructure": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:62174;http://localhost:62175"
+    }
+  }
+}

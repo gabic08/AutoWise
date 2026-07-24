@@ -9,7 +9,7 @@ public class User : ModifiedCreatedAuditBaseEntity
     public string ExternalId { get; private set; }
     public string Provider { get; private set; }
 
-    public User() { }
+    private User() { }
 
     public static User Create(string displayName, string email, string externalId, string provider)
     {
@@ -60,7 +60,7 @@ public class User : ModifiedCreatedAuditBaseEntity
     {
         if (string.IsNullOrWhiteSpace(displayName))
         {
-            throw new ArgumentException("Display name is required.", nameof(displayName));
+            throw new ArgumentException("Display Name is required.", nameof(displayName));
         }
         DisplayName = displayName.Trim();
     }

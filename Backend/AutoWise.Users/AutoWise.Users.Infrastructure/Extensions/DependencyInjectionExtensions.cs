@@ -1,12 +1,4 @@
-﻿using AutoWise.CommonUtilities.Persistence.PostgreSQL.Interceptors;
-using AutoWise.Users.Application;
-using AutoWise.Users.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace AutoWise.Users.Infrastructure.Extensions;
+﻿namespace AutoWise.Users.Infrastructure.Extensions;
 
 public static class DependencyInjectionExtensions
 {
@@ -24,6 +16,8 @@ public static class DependencyInjectionExtensions
         });
 
         services.AddScoped<IUsersDbContext>(sp => sp.GetRequiredService<UsersDbContext>());
+
+        services.AddGrpc();
 
         return services;
     }

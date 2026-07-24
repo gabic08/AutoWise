@@ -1,9 +1,3 @@
-using AutoWise.CommonUtilities.Messaging.Contracts.Media;
-using AutoWise.Media.Application.Features.MediaAttachments;
-using AutoWise.Media.Infrastructure.Consumers;
-using MassTransit;
-using NSubstitute;
-
 namespace AutoWise.Media.Tests.Infrastructure.Consumers;
 
 public class MediaAttachmentRemovedConsumerTests

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "AutoWise.Users.Infrastructure.Grpc";
+
+package users;
+
+service UserProtoService {
+	rpc CreateOrSyncUser (CreateOrSyncUserRequest) returns (CreateOrSyncUserResponse);
+
+}
+
+message CreateOrSyncUserRequest{
+	string email = 1;
+	string provider = 2;
+	string external_id = 3;
+	string display_name = 4;
+}
+
+message CreateOrSyncUserResponse{
+	string id = 1;
+	string email = 2;
+	string provider = 3;
+	string external_id = 4;
+	string display_name = 5;
+}

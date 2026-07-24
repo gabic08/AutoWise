@@ -1,6 +1,3 @@
-using AutoWise.UserVehicles.Domain.Models;
-using FluentAssertions;
-
 namespace AutoWise.UserVehicles.Tests.Domain;
 
 public class UserVehicleAttachmentTests

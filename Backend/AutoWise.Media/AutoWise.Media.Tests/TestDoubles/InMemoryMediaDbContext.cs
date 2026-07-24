@@ -1,7 +1,3 @@
-using AutoWise.Media.Application.Data;
-using AutoWise.Media.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-
 namespace AutoWise.Media.Tests.TestDoubles;
 
 public class InMemoryMediaDbContext(DbContextOptions<InMemoryMediaDbContext> options)

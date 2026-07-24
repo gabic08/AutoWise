@@ -1,12 +1,3 @@
-using AutoWise.CommonUtilities.Exceptions;
-using AutoWise.CommonUtilities.Messaging.Abstractions;
-using AutoWise.CommonUtilities.Messaging.Contracts.Media;
-using AutoWise.UserVehicles.Application.Features.UserVehicles.Services;
-using AutoWise.UserVehicles.Domain.Models;
-using AutoWise.UserVehicles.Tests.TestDoubles;
-using FluentAssertions;
-using NSubstitute;
-
 namespace AutoWise.UserVehicles.Tests.Application;
 
 public class UserVehicleAttachmentServiceTests

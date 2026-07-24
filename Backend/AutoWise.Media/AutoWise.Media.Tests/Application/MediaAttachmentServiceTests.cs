@@ -1,18 +1,3 @@
-using AutoWise.CommonUtilities.Exceptions;
-using AutoWise.CommonUtilities.Messaging.Abstractions;
-using AutoWise.CommonUtilities.Messaging.Contracts.Media;
-using AutoWise.Media.Application.Config;
-using AutoWise.Media.Application.Dtos;
-using AutoWise.Media.Application.Features.MediaAttachments;
-using AutoWise.Media.Application.Storage;
-using AutoWise.Media.Domain.Enums;
-using AutoWise.Media.Tests.TestDoubles;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using NSubstitute;
-using System.Text;
-
 namespace AutoWise.Media.Tests.Application;
 
 public class MediaAttachmentServiceTests

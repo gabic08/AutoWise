@@ -22,7 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <Reference Include="AutoWise.CommonUtilities.Exceptions">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

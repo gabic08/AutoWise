@@ -1,6 +1,3 @@
-using AutoWise.Media.Domain.Models;
-using FluentAssertions;
-
 namespace AutoWise.Media.Tests.Domain;
 
 public class MediaAttachmentTests
