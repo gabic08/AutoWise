@@ -13,3 +13,5 @@ global using MassTransit;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Caching.Distributed;
 global using NSubstitute;
+global using System.Text;
+global using System.Text.Json;

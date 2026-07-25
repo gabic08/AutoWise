@@ -20,6 +20,22 @@ public class UserVehiclesServiceTests
 
     private static IDistributedCache CreateCache() => Substitute.For<IDistributedCache>();
 
+    private static IDistributedCache CreateCacheReturning(string vin, string make, string model, string year)
+    {
+        var cache = Substitute.For<IDistributedCache>();
+        var cachedSpecifications = JsonSerializer.Serialize(new List<VehicleSpecificationDto>
+        {
+            new("Make", make),
+            new("Model", model),
+            new("Model Year", year)
+        });
+
+        cache.GetAsync($"vehicle-specifications:{vin}", Arg.Any<CancellationToken>())
+            .Returns(Encoding.UTF8.GetBytes(cachedSpecifications));
+
+        return cache;
+    }
+
     [Fact]
     public async Task CreateAsync_WithValidRequest_PersistsVehicleAndReturnsId()
     {
@@ -40,6 +56,28 @@ public class UserVehiclesServiceTests
         persisted.Model.Should().Be("Corolla");
         persisted.Year.Should().Be(2020);
         persisted.UserId.Should().Be(userId);
+    }
+
+    [Fact]
+    public async Task CreateAsync_WithCachedSpecifications_UsesCacheAndSkipsGrpcCall()
+    {
+        // Arrange
+        await using var dbContext = InMemoryUserVehiclesDbContext.Create();
+        var specsService = CreateSpecsService();
+        var cache = CreateCacheReturning(ValidVin, "Honda", "Civic", "2019");
+        var sut = new UserVehiclesService(dbContext, specsService, cache);
+        var request = new CreateUserVehicleRequest(ValidVin, "ABC-123");
+        var userId = Guid.NewGuid();
+
+        // Act
+        var vehicleId = await sut.CreateAsync(request, userId);
+
+        // Assert
+        var persisted = await dbContext.UserVehicles.FindAsync(vehicleId);
+        persisted!.Make.Should().Be("Honda");
+        persisted.Model.Should().Be("Civic");
+        persisted.Year.Should().Be(2019);
+        await specsService.DidNotReceive().GetSpecificationsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
