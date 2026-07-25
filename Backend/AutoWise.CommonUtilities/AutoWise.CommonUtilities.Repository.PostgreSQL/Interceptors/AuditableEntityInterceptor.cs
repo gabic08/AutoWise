@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace AutoWise.CommonUtilities.Persistence.PostgreSQL.Interceptors;
 
-public class AuditableEntityInterceptor : SaveChangesInterceptor
+public class AuditableEntityInterceptor(ICurrentUserAccessor currentUserAccessor) : SaveChangesInterceptor
 {
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -19,14 +19,14 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private static void ApplyAuditInfo(DbContext context)
+    private void ApplyAuditInfo(DbContext context)
     {
         if (context == null)
         {
             return;
         }
 
-        var sessionUserId = GetSessionUserId();
+        var sessionUserId = currentUserAccessor.UserId ?? Guid.Empty;
         var now = DateTime.UtcNow;
 
         var entries = context.ChangeTracker.Entries()
@@ -44,12 +44,6 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
                 SetCreationAuditInfo(entry, sessionUserId, now);
             }
         }
-    }
-
-    private static Guid GetSessionUserId()
-    {
-        var userIdentifier = new Guid("54cf3f84-ef0b-47e7-9480-a6e5d0be9052");
-        return userIdentifier;
     }
 
     private static void SetCreationAndModificationAuditInfo(EntityEntry entityEntry, Guid sessionUserId, DateTime now)

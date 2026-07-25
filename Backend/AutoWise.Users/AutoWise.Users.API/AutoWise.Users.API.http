@@ -1,6 +1,0 @@
-@AutoWise.Users.API_HostAddress = http://localhost:5187
-
-GET {{AutoWise.Users.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

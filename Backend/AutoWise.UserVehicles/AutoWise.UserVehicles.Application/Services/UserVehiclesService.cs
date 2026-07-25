@@ -46,19 +46,69 @@ public class UserVehiclesService(
         return await _vehicleSpecificationsService.GetSpecificationsAsync(vin, ct);
     }
 
-    public async Task<UserVehicleResponse> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<QueryResponse<UserVehicleResponse>> GetAllForUserAsync(Guid sessionUserId, GetUserVehiclesRequest request, CancellationToken ct = default)
+    {
+        var query = _dbContext.UserVehicles.AsNoTracking().Where(v => v.UserId == sessionUserId);
+
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search.ToLower();
+            query = query.Where(v =>
+                v.Make.ToLower().Contains(search) ||
+                v.Model.ToLower().Contains(search) ||
+                v.LicensePlateNumber.ToLower().Contains(search) ||
+                v.Vin.ToLower().Contains(search));
+        }
+
+        query = request.SortBy?.Trim().ToLowerInvariant() switch
+        {
+            "make" => request.SortDescending ? query.OrderByDescending(v => v.Make) : query.OrderBy(v => v.Make),
+            "model" => request.SortDescending ? query.OrderByDescending(v => v.Model) : query.OrderBy(v => v.Model),
+            "year" => request.SortDescending ? query.OrderByDescending(v => v.Year) : query.OrderBy(v => v.Year),
+            "licenseplatenumber" => request.SortDescending ? query.OrderByDescending(v => v.LicensePlateNumber) : query.OrderBy(v => v.LicensePlateNumber),
+            _ => query.OrderByDescending(v => v.CreatedOn)
+        };
+
+        var totalItemsCount = await query.CountAsync(ct);
+
+        var page = request.Page < 1 ? 1 : request.Page;
+        var pageSize = request.PageSize switch
+        {
+            < 1 => 20,
+            > 100 => 100,
+            _ => request.PageSize
+        };
+
+        var vehicles = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(v => new UserVehicleResponse(v.Id, v.LicensePlateNumber, v.Make, v.Model, v.Vin, v.Year))
+            .ToListAsync(ct);
+
+        var pagedResponse = new PagedQueryResponse
+        {
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalItemsCount = totalItemsCount,
+            TotalPagesCount = (int)Math.Ceiling(totalItemsCount / (double)pageSize)
+        };
+
+        return new QueryResponse<UserVehicleResponse>(vehicles, pagedResponse);
+    }
+
+    public async Task<UserVehicleResponse> GetByIdAsync(Guid id, Guid sessionUserId, CancellationToken ct = default)
     {
         var vehicle = await _dbContext.UserVehicles
             .AsNoTracking()
-            .FirstOrDefaultAsync(v => v.Id == id, ct)
+            .FirstOrDefaultAsync(v => v.Id == id && v.UserId == sessionUserId, ct)
             ?? throw new NotFoundException($"User vehicle with id '{id}' was not found.");
 
-        return new UserVehicleResponse(vehicle.Id, vehicle.LicensePlateNumber);
+        return new UserVehicleResponse(vehicle.Id, vehicle.LicensePlateNumber, vehicle.Make, vehicle.Model, vehicle.Vin, vehicle.Year);
     }
 
-    public async Task UpdateAsync(Guid id, UpdateUserVehicleRequest request, CancellationToken ct = default)
+    public async Task UpdateAsync(Guid id, UpdateUserVehicleRequest request, Guid sessionUserId, CancellationToken ct = default)
     {
-        var vehicle = await _dbContext.UserVehicles.FirstOrDefaultAsync(v => v.Id == id, ct)
+        var vehicle = await _dbContext.UserVehicles.FirstOrDefaultAsync(v => v.Id == id && v.UserId == sessionUserId, ct)
             ?? throw new NotFoundException($"User vehicle with id '{id}' was not found.");
 
         vehicle.ChangeLicensePlateNumber(request.LicensePlateNumber);
@@ -66,9 +116,9 @@ public class UserVehiclesService(
         await _dbContext.SaveChangesAsync(ct);
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken ct = default)
+    public async Task DeleteAsync(Guid id, Guid sessionUserId, CancellationToken ct = default)
     {
-        var vehicle = await _dbContext.UserVehicles.FirstOrDefaultAsync(v => v.Id == id, ct)
+        var vehicle = await _dbContext.UserVehicles.FirstOrDefaultAsync(v => v.Id == id && v.UserId == sessionUserId, ct)
             ?? throw new NotFoundException($"User vehicle with id '{id}' was not found.");
 
         _dbContext.UserVehicles.Remove(vehicle);

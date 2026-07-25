@@ -4,7 +4,7 @@ public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+        services.AddAuditableEntityInterceptor();
 
         services.AddDbContext<MediaDbContext>((sp, options) =>
         {

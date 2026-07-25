@@ -2,6 +2,7 @@
 global using AutoWise.CommonUtilities.ExtensionMethods;
 global using AutoWise.CommonUtilities.Messaging.Abstractions;
 global using AutoWise.CommonUtilities.Messaging.Contracts.Media;
+global using AutoWise.CommonUtilities.Models.Queries;
 global using AutoWise.CommonUtilities.Persistence.Abstractions;
 global using AutoWise.UserVehicles.Application.Data;
 global using AutoWise.UserVehicles.Application.Dtos;

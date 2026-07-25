@@ -7,6 +7,7 @@ global using AutoWise.CommonUtilities.Messaging.MassTransit;
 global using AutoWise.CommonUtilities.Messaging.MassTransit.Extensions;
 global using AutoWise.CommonUtilities.Persistence.PostgreSQL.Configurations;
 global using AutoWise.CommonUtilities.Persistence.PostgreSQL.Context;
+global using AutoWise.CommonUtilities.Persistence.PostgreSQL.Extensions;
 global using AutoWise.CommonUtilities.Persistence.PostgreSQL.Interceptors;
 global using AutoWise.Media.Application.Data;
 global using AutoWise.Media.Application.Features.MediaAttachments;
