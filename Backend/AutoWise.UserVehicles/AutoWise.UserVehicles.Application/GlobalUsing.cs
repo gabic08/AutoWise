@@ -1,4 +1,5 @@
 ﻿global using AutoWise.CommonUtilities.Exceptions;
+global using AutoWise.CommonUtilities.ExtensionMethods;
 global using AutoWise.CommonUtilities.Messaging.Abstractions;
 global using AutoWise.CommonUtilities.Messaging.Contracts.Media;
 global using AutoWise.CommonUtilities.Persistence.Abstractions;
@@ -8,3 +9,5 @@ global using AutoWise.UserVehicles.Application.Services;
 global using AutoWise.UserVehicles.Application.Services.Interfaces;
 global using AutoWise.UserVehicles.Domain.Models;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Caching.Distributed;
+global using System.Text.Json;

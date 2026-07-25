@@ -11,4 +11,5 @@ global using AutoWise.UserVehicles.Tests.TestDoubles;
 global using FluentAssertions;
 global using MassTransit;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Caching.Distributed;
 global using NSubstitute;

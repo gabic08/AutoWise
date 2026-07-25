@@ -12,7 +12,7 @@ public class DeleteVehicleSpecificationsCommandHandler(MongoDbService mongoDbSer
         var success = deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
         if (success)
         {
-            await cache.RemoveAsync(command.Vin, cancellationToken);
+            await cache.RemoveAsync($"vehicle-specifications:{command.Vin}", cancellationToken);
             return new DeleteVehicleSpecificationsResult(true);
         }
 

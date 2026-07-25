@@ -1,15 +1,19 @@
 ﻿namespace AutoWise.UserVehicles.Application.Services;
 
-public class UserVehiclesService(IUserVehiclesDbContext dbContext, IVehicleSpecificationsService vehicleSpecificationsService)
+public class UserVehiclesService(
+    IUserVehiclesDbContext dbContext,
+    IVehicleSpecificationsService vehicleSpecificationsService,
+    IDistributedCache cache)
     : IUserVehiclesService
 {
     private readonly IUserVehiclesDbContext _dbContext = dbContext;
     private readonly IVehicleSpecificationsService _vehicleSpecificationsService = vehicleSpecificationsService;
+    private readonly IDistributedCache _cache = cache;
 
 
     public async Task<Guid> CreateAsync(CreateUserVehicleRequest request, Guid sessionUserId, CancellationToken ct = default)
     {
-        var vehicleSpecifications = await _vehicleSpecificationsService.GetSpecificationsAsync(request.Vin, ct);
+        var vehicleSpecifications = await GetVehicleSpecificationsAsync(request.Vin, ct);
 
         var licensePlateNumber = request.LicensePlateNumber;
         var vin = request.Vin;
@@ -27,6 +31,19 @@ public class UserVehiclesService(IUserVehiclesDbContext dbContext, IVehicleSpeci
         await _dbContext.SaveChangesAsync(ct);
 
         return newVehicle.Id;
+    }
+
+    private async Task<IEnumerable<VehicleSpecificationDto>> GetVehicleSpecificationsAsync(string vin, CancellationToken ct)
+    {
+        var cacheKey = $"vehicle-specifications:{vin}";
+
+        var cachedValue = await _cache.GetStringAsync(cacheKey, ct);
+        if (!cachedValue.NullOrEmpty())
+        {
+            return JsonSerializer.Deserialize<IEnumerable<VehicleSpecificationDto>>(cachedValue)!;
+        }
+
+        return await _vehicleSpecificationsService.GetSpecificationsAsync(vin, ct);
     }
 
     public async Task<UserVehicleResponse> GetByIdAsync(Guid id, CancellationToken ct = default)

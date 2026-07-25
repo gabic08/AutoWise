@@ -19,6 +19,9 @@
     <Reference Include="AutoWise.CommonUtilities.Exceptions">
       <HintPath>..\..\AutoWise.VehiclesCatalog\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
     </Reference>
+    <Reference Include="AutoWise.CommonUtilities.ExtensionMethods">
+      <HintPath>..\Libraries\AutoWise.CommonUtilities.ExtensionMethods.dll</HintPath>
+    </Reference>
     <Reference Include="AutoWise.CommonUtilities.Messaging.Abstractions">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Messaging.Abstractions.dll</HintPath>
     </Reference>

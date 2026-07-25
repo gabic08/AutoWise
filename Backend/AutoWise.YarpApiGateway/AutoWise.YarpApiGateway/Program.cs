@@ -1,3 +1,5 @@
+using AutoWise.YarpApiGateway.Extensions;
+using AutoWise.YarpApiGateway.Middleware;
 using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,12 +18,20 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
     });
 });
 
+builder.Services.AddAuthenticationServices(builder.Configuration);
+builder.Services.AddRedisCache(builder.Configuration);
+builder.Services.AddUsersGrpcClient(builder.Configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseRateLimiter();
 
-app.MapReverseProxy();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseMiddleware<UserSessionMiddleware>();
+
+app.MapReverseProxy().RequireAuthorization();
 
 app.Run();

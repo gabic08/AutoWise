@@ -13,7 +13,8 @@ public class GetVehicleSpecificationsQueryHandler(MongoDbService mongoDbService,
 
         List<VehicleSpecification> specifications;
 
-        var cachedVehicleSpecifications = await cache.GetStringAsync(query.Vin, cancellationToken);
+        var cacheKey = $"vehicle-specifications:{query.Vin}";
+        var cachedVehicleSpecifications = await cache.GetStringAsync(cacheKey, cancellationToken);
         if (cachedVehicleSpecifications.NullOrEmpty())
         {
             var vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
@@ -29,7 +30,7 @@ public class GetVehicleSpecificationsQueryHandler(MongoDbService mongoDbService,
             }
 
             var serializedSpecs = JsonSerializer.Serialize(specifications);
-            await cache.SetStringAsync(query.Vin, serializedSpecs, cancellationToken);
+            await cache.SetStringAsync(cacheKey, serializedSpecs, cancellationToken);
         }
         else
         {

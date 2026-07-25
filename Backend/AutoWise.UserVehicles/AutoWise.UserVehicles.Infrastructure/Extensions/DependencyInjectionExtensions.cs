@@ -22,6 +22,12 @@ public static class DependencyInjectionExtensions
             OutboxDatabaseProvider.Postgres,
             x => x.AddConsumer<MediaAttachmentUploadedConsumer>());
 
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("Redis")
+                ?? throw new InvalidOperationException("Connection string 'Redis' not found.");
+        });
+
         services.AddGrpcClient<VehicleSpecificationsProtoService.VehicleSpecificationsProtoServiceClient>(options =>
         {
             options.Address = new Uri(configuration.GetSection("GrpcSettings:VehiclesCatalogUrl").Value!);

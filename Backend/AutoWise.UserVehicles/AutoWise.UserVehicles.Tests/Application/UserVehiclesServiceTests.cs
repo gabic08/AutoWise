@@ -18,12 +18,14 @@ public class UserVehiclesServiceTests
         return specsService;
     }
 
+    private static IDistributedCache CreateCache() => Substitute.For<IDistributedCache>();
+
     [Fact]
     public async Task CreateAsync_WithValidRequest_PersistsVehicleAndReturnsId()
     {
         // Arrange
         await using var dbContext = InMemoryUserVehiclesDbContext.Create();
-        var sut = new UserVehiclesService(dbContext, CreateSpecsService());
+        var sut = new UserVehiclesService(dbContext, CreateSpecsService(), CreateCache());
         var request = new CreateUserVehicleRequest(ValidVin, "ABC-123");
         var userId = Guid.NewGuid();
 
@@ -48,7 +50,7 @@ public class UserVehiclesServiceTests
         var vehicle = UserVehicle.Create(Guid.NewGuid(), "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
         dbContext.UserVehicles.Add(vehicle);
         await dbContext.SaveChangesAsync();
-        var sut = new UserVehiclesService(dbContext, CreateSpecsService());
+        var sut = new UserVehiclesService(dbContext, CreateSpecsService(), CreateCache());
 
         // Act
         var response = await sut.GetByIdAsync(vehicle.Id);
@@ -63,7 +65,7 @@ public class UserVehiclesServiceTests
     {
         // Arrange
         await using var dbContext = InMemoryUserVehiclesDbContext.Create();
-        var sut = new UserVehiclesService(dbContext, CreateSpecsService());
+        var sut = new UserVehiclesService(dbContext, CreateSpecsService(), CreateCache());
 
         // Act
         Func<Task> act = () => sut.GetByIdAsync(Guid.NewGuid());
@@ -80,7 +82,7 @@ public class UserVehiclesServiceTests
         var vehicle = UserVehicle.Create(Guid.NewGuid(), "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
         dbContext.UserVehicles.Add(vehicle);
         await dbContext.SaveChangesAsync();
-        var sut = new UserVehiclesService(dbContext, CreateSpecsService());
+        var sut = new UserVehiclesService(dbContext, CreateSpecsService(), CreateCache());
 
         // Act
         await sut.UpdateAsync(vehicle.Id, new UpdateUserVehicleRequest("XYZ-999"));
@@ -95,7 +97,7 @@ public class UserVehiclesServiceTests
     {
         // Arrange
         await using var dbContext = InMemoryUserVehiclesDbContext.Create();
-        var sut = new UserVehiclesService(dbContext, CreateSpecsService());
+        var sut = new UserVehiclesService(dbContext, CreateSpecsService(), CreateCache());
 
         // Act
         Func<Task> act = () => sut.UpdateAsync(Guid.NewGuid(), new UpdateUserVehicleRequest("XYZ-999"));
@@ -112,7 +114,7 @@ public class UserVehiclesServiceTests
         var vehicle = UserVehicle.Create(Guid.NewGuid(), "ABC-123", "Toyota", "Corolla", ValidVin, 2020);
         dbContext.UserVehicles.Add(vehicle);
         await dbContext.SaveChangesAsync();
-        var sut = new UserVehiclesService(dbContext, CreateSpecsService());
+        var sut = new UserVehiclesService(dbContext, CreateSpecsService(), CreateCache());
 
         // Act
         await sut.DeleteAsync(vehicle.Id);
@@ -127,7 +129,7 @@ public class UserVehiclesServiceTests
     {
         // Arrange
         await using var dbContext = InMemoryUserVehiclesDbContext.Create();
-        var sut = new UserVehiclesService(dbContext, CreateSpecsService());
+        var sut = new UserVehiclesService(dbContext, CreateSpecsService(), CreateCache());
 
         // Act
         Func<Task> act = () => sut.DeleteAsync(Guid.NewGuid());

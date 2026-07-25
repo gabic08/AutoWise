@@ -4,31 +4,39 @@ using Grpc.Core;
 
 namespace AutoWise.VehiclesCatalog.API.Grpc.Services;
 
-public class VehicleSpecificationsService(GetVehicleSpecificationsConfig vehicleSpecificationsConfig, MongoDbService mongoDbService, ILogger<VehicleSpecificationsService> logger)
+public class VehicleSpecificationsService(GetVehicleSpecificationsConfig vehicleSpecificationsConfig, MongoDbService mongoDbService, IDistributedCache cache, ILogger<VehicleSpecificationsService> logger)
     : VehicleSpecificationsProtoService.VehicleSpecificationsProtoServiceBase
 {
     public override async Task<GetVehicleSpecificationsResponseList> GetVehicleSpecifications(GetVehicleSpecificationsRequest request, ServerCallContext context)
     {
-        var vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
-        var response = new GetVehicleSpecificationsResponseList();
+        var cacheKey = $"vehicle-specifications:{request.Vin}";
 
+        var cachedSpecifications = await cache.GetStringAsync(cacheKey, context.CancellationToken);
+        if (!cachedSpecifications.NullOrEmpty())
+        {
+            return BuildResponse(JsonSerializer.Deserialize<List<VehicleSpecification>>(cachedSpecifications));
+        }
+
+        var vehiclesDbSet = mongoDbService.Database.GetCollection<Vehicle>("vehicles");
 
         var existingSpecifications = await ImportVehicleSpecificationsUtils.GetExistingVehicleSpecificationsAsync(request.Vin, vehiclesDbSet);
         if (ImportVehicleSpecificationsUtils.VehicleSpecificationsAreAlreadyImported(existingSpecifications))
         {
-            response.Specifications.AddRange(existingSpecifications.Select(s => new GetVehicleSpecificationsResponse
-            {
-                Label = s.Label,
-                Value = s.Value
-            }));
-
-            return response;
+            await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(existingSpecifications), context.CancellationToken);
+            return BuildResponse(existingSpecifications);
         }
 
         var specificationsToImport = await ImportVehicleSpecificationsUtils.FetchVehicleSpecificationsAsync(request.Vin, vehicleSpecificationsConfig, logger);
         await ImportVehicleSpecificationsUtils.SaveNewVehicleSpecificationsAsync(request.Vin, specificationsToImport, vehiclesDbSet);
 
-        response.Specifications.AddRange(specificationsToImport.Select(s => new GetVehicleSpecificationsResponse
+        await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(specificationsToImport), context.CancellationToken);
+        return BuildResponse(specificationsToImport);
+    }
+
+    private static GetVehicleSpecificationsResponseList BuildResponse(IEnumerable<VehicleSpecification> specifications)
+    {
+        var response = new GetVehicleSpecificationsResponseList();
+        response.Specifications.AddRange(specifications.Select(s => new GetVehicleSpecificationsResponse
         {
             Label = s.Label,
             Value = s.Value
