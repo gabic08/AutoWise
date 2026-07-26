@@ -13,24 +13,31 @@ public class UserVehiclesService(
 
     public async Task<Guid> CreateAsync(CreateUserVehicleRequest request, Guid sessionUserId, CancellationToken ct = default)
     {
-        var vehicleSpecifications = await GetVehicleSpecificationsAsync(request.Vin, ct);
+        try
+        {
+            var vehicleSpecifications = await GetVehicleSpecificationsAsync(request.Vin, ct);
 
-        var licensePlateNumber = request.LicensePlateNumber;
-        var vin = request.Vin;
-        var make = vehicleSpecifications.FirstOrDefault(s => s.Label == "Make")?.Value;
-        var model = vehicleSpecifications.FirstOrDefault(s => s.Label == "Model")?.Value;
-        _ = int.TryParse(
-            vehicleSpecifications.FirstOrDefault(s => s.Label == "Model Year")?.Value,
-            out int year);
+            var licensePlateNumber = request.LicensePlateNumber;
+            var vin = request.Vin;
+            var make = vehicleSpecifications.FirstOrDefault(s => s.Label == "Make")?.Value;
+            var model = vehicleSpecifications.FirstOrDefault(s => s.Label == "Model")?.Value;
+            _ = int.TryParse(
+                vehicleSpecifications.FirstOrDefault(s => s.Label == "Model Year")?.Value,
+                out int year);
 
 
-        var newVehicle = UserVehicle.Create(sessionUserId, licensePlateNumber, make, model, vin, year);
+            var newVehicle = UserVehicle.Create(sessionUserId, licensePlateNumber, make, model, vin, year);
 
 
-        await _dbContext.UserVehicles.AddAsync(newVehicle, ct);
-        await _dbContext.SaveChangesAsync(ct);
+            await _dbContext.UserVehicles.AddAsync(newVehicle, ct);
+            await _dbContext.SaveChangesAsync(ct);
 
-        return newVehicle.Id;
+            return newVehicle.Id;
+        }
+        catch (Exception ex)
+        {
+            throw new BadRequestException(ex.Message);
+        }
     }
 
     private async Task<IEnumerable<VehicleSpecificationDto>> GetVehicleSpecificationsAsync(string vin, CancellationToken ct)

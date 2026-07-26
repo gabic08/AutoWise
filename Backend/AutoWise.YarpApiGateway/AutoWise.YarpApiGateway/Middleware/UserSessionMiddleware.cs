@@ -14,10 +14,15 @@ public class UserSessionMiddleware(RequestDelegate next)
     {
         if (context.User.Identity?.IsAuthenticated == true)
         {
-            var externalId = context.User.FindFirst("sub")?.Value;
-            var email = context.User.FindFirst("email")?.Value ?? string.Empty;
-            var displayName = context.User.FindFirst("name")?.Value ?? string.Empty;
             var provider = configuration["Auth:ActiveProvider"];
+
+            var externalIdClaim = configuration[$"Auth:{provider}:Claims:ExternalId"] ?? "sub";
+            var emailClaim = configuration[$"Auth:{provider}:Claims:Email"] ?? "email";
+            var displayNameClaim = configuration[$"Auth:{provider}:Claims:DisplayName"] ?? "name";
+
+            var externalId = context.User.FindFirst(externalIdClaim)?.Value;
+            var email = context.User.FindFirst(emailClaim)?.Value ?? string.Empty;
+            var displayName = context.User.FindFirst(displayNameClaim)?.Value ?? string.Empty;
 
             if (externalId.NotNullOrEmpty() && provider.NotNullOrEmpty())
             {

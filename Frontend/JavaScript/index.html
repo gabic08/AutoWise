@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>AutoWise</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <header>
+            <h1>AutoWise</h1>
+            <button id="logout-button" class="hidden">Logout</button>
+        </header>
+
+    <div id="login-view">
+        <p>Sign in to see your vehicles.</p>
+        <button id="login-button">Sign in with Microsoft</button>
+    </div>
+
+    <div id="app-view" class="hidden">
+        <div id="vehicle-list-view">
+            <form id="add-vehicle-form">
+                <input id="vin-input" placeholder="VIN" required maxlength="17" minlength="17">
+                <input id="plate-input" placeholder="License plate" required>
+                <button type="submit">Add Vehicle</button>
+            </form>
+
+            <div id="vehicle-list"></div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@5.17.1/lib/msal-browser.min.js"></script>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+
+    </body>
+</html>

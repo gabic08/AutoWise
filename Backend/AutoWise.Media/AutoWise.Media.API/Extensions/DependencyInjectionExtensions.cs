@@ -14,7 +14,6 @@ public static class DependencyInjectionExtensions
     public static WebApplication UseApiServices(this WebApplication app)
     {
         app.UseExceptionHandler(options => { });
-        app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
 

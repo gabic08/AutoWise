@@ -6,8 +6,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddServiceDiscovery();
+
 builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .AddServiceDiscoveryDestinationResolver();
 
 builder.Services.AddRateLimiter(rateLimiterOptions =>
 {
@@ -19,6 +22,7 @@ builder.Services.AddRateLimiter(rateLimiterOptions =>
 });
 
 builder.Services.AddAuthenticationServices(builder.Configuration);
+builder.Services.AddCorsPolicy(builder.Configuration);
 builder.Services.AddRedisCache(builder.Configuration);
 builder.Services.AddUsersGrpcClient(builder.Configuration);
 
@@ -26,6 +30,8 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseRateLimiter();
+
+app.UseCors("Frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
