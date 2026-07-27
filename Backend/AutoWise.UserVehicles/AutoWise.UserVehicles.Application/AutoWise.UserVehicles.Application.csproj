@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <Reference Include="AutoWise.CommonUtilities.Exceptions">
-      <HintPath>..\..\AutoWise.VehiclesCatalog\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
+		<HintPath>..\Libraries\AutoWise.CommonUtilities.Exceptions.dll</HintPath>
     </Reference>
     <Reference Include="AutoWise.CommonUtilities.ExtensionMethods">
       <HintPath>..\Libraries\AutoWise.CommonUtilities.ExtensionMethods.dll</HintPath>
@@ -32,7 +32,7 @@
       <HintPath>..\Libraries\AutoWise.CommonUtilities.Models.dll</HintPath>
     </Reference>
     <Reference Include="AutoWise.CommonUtilities.Persistence.Abstractions">
-      <HintPath>..\..\AutoWise.Media\Libraries\AutoWise.CommonUtilities.Persistence.Abstractions.dll</HintPath>
+		<HintPath>..\Libraries\AutoWise.CommonUtilities.Persistence.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
 
