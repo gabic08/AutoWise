@@ -29,6 +29,23 @@ services:
             - "5672:5672"
             - "15672:15672"
 
+    keycloak:
+        image: quay.io/keycloak/keycloak:26.4
+        # Imports Keycloak/autowise-realm.json on first start (skipped once the realm exists).
+        command: start-dev --import-realm
+        environment:
+            KC_BOOTSTRAP_ADMIN_USERNAME: admin
+            KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+            # Tokens are always issued as localhost:8080 (what the browser sees), while containers
+            # such as the gateway can still reach Keycloak's endpoints at keycloak:8080.
+            KC_HOSTNAME: http://localhost:8080
+            KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+        ports:
+            - "8080:8080"
+        volumes:
+            - keycloak-data:/opt/keycloak/data
+            - ./Keycloak:/opt/keycloak/data/import:ro
+
     media:
         build:
             context: ./Backend
@@ -105,12 +122,17 @@ services:
             ConnectionStrings__Redis: "redis:6379"
             GrpcSettings__UsersUrl: "http://users:8080"
             DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_HTTP2UNENCRYPTEDSUPPORT: "1"
+            Auth__ActiveProvider: Keycloak
+            Auth__Keycloak__Authority: "http://localhost:8080/realms/autowise"
+            Auth__Keycloak__MetadataAddress: "http://keycloak:8080/realms/autowise/.well-known/openid-configuration"
+            Auth__Keycloak__Audience: autowise-api
             Auth__AzureAD__Authority: "YOUR-AZURE-AD-AUTHORITY"
             Auth__AzureAD__Audience: "YOUR-AZURE-AD-AUDIENCE"
         ports:
             - "7080:8080"
         depends_on:
             - redis
+            - keycloak
             - users
             - user-vehicles
             - vehicles-catalog
@@ -120,3 +142,4 @@ volumes:
     postgres-data:
     mongo-data:
     media-files:
+    keycloak-data:

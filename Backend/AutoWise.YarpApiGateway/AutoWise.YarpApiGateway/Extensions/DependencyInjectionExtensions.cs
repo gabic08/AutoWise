@@ -12,22 +12,31 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddAuthenticationServices(this IServiceCollection services, IConfiguration configuration)
     {
         var activeAuthProvider = configuration.GetValue<AuthProvider>("Auth:ActiveProvider");
-        var (authority, audience) = activeAuthProvider switch
+        var sectionName = activeAuthProvider switch
         {
-            AuthProvider.AzureAD => (
-                configuration[$"{AzureAdAuthOptions.SectionName}:Authority"],
-                configuration[$"{AzureAdAuthOptions.SectionName}:Audience"]),
-            AuthProvider.Keycloak => (
-                configuration[$"{KeycloakAuthOptions.SectionName}:Authority"],
-                configuration[$"{KeycloakAuthOptions.SectionName}:Audience"]),
+            AuthProvider.AzureAD => AzureAdAuthOptions.SectionName,
+            AuthProvider.Keycloak => KeycloakAuthOptions.SectionName,
             _ => throw new InvalidOperationException($"Unsupported auth provider '{activeAuthProvider}'.")
         };
+
+        var authority = configuration[$"{sectionName}:Authority"];
+        var audience = configuration[$"{sectionName}:Audience"];
+        // Optional: where to fetch the OIDC discovery document when it differs from the authority,
+        // e.g. the gateway in Docker reaching Keycloak at keycloak:8080 while tokens say localhost:8080.
+        var metadataAddress = configuration[$"{sectionName}:MetadataAddress"];
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 options.Authority = authority;
                 options.Audience = audience;
+                if (!string.IsNullOrWhiteSpace(metadataAddress))
+                {
+                    options.MetadataAddress = metadataAddress;
+                }
+                // Local Keycloak runs over plain HTTP; anything else must use HTTPS.
+                var metadataSource = string.IsNullOrWhiteSpace(metadataAddress) ? authority : metadataAddress;
+                options.RequireHttpsMetadata = metadataSource?.StartsWith("http://", StringComparison.OrdinalIgnoreCase) != true;
                 options.MapInboundClaims = false;
             });
 
