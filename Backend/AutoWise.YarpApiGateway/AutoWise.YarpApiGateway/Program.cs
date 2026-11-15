@@ -1,6 +1,5 @@
 using AutoWise.YarpApiGateway.Extensions;
 using AutoWise.YarpApiGateway.Middleware;
-using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,16 +11,8 @@ builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
     .AddServiceDiscoveryDestinationResolver();
 
-builder.Services.AddRateLimiter(rateLimiterOptions =>
-{
-    rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
-    {
-        options.PermitLimit = 5;
-        options.Window = TimeSpan.FromSeconds(10);
-    });
-});
-
 builder.Services.AddAuthenticationServices(builder.Configuration);
+builder.Services.AddRateLimiting(builder.Configuration);
 builder.Services.AddCorsPolicy(builder.Configuration);
 builder.Services.AddRedisCache(builder.Configuration);
 builder.Services.AddUsersGrpcClient(builder.Configuration);
@@ -29,12 +20,13 @@ builder.Services.AddUsersGrpcClient(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseRateLimiter();
-
 app.UseCors("Frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// After authentication so the limiter can partition by the signed-in user.
+app.UseRateLimiter();
 
 app.UseMiddleware<UserSessionMiddleware>();
 

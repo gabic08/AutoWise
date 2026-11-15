@@ -2,6 +2,8 @@
 using AutoWise.YarpApiGateway.Auth;
 using AutoWise.YarpApiGateway.Grpc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 namespace AutoWise.YarpApiGateway.Extensions;
 
@@ -44,7 +46,39 @@ public static class DependencyInjectionExtensions
             {
                 policy.WithOrigins(allowedOrigins)
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    // Lets the browser read the file name on media downloads.
+                    .WithExposedHeaders("Content-Disposition");
+            });
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddRateLimiting(this IServiceCollection services, IConfiguration configuration)
+    {
+        var permitLimit = configuration.GetValue("RateLimiting:PermitLimit", 100);
+        var window = TimeSpan.FromSeconds(configuration.GetValue("RateLimiting:WindowSeconds", 10));
+
+        var provider = configuration["Auth:ActiveProvider"];
+        var externalIdClaim = configuration[$"Auth:{provider}:Claims:ExternalId"] ?? "sub";
+
+        services.AddRateLimiter(rateLimiterOptions =>
+        {
+            rateLimiterOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            // One window per signed-in user, falling back to the client IP, so users don't share a single quota.
+            rateLimiterOptions.AddPolicy("fixed", httpContext =>
+            {
+                var partitionKey = httpContext.User.FindFirst(externalIdClaim)?.Value
+                    ?? httpContext.Connection.RemoteIpAddress?.ToString()
+                    ?? "anonymous";
+
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey, _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = permitLimit,
+                    Window = window
+                });
             });
         });
 

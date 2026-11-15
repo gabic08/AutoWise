@@ -2,18 +2,17 @@
 
 > Work in progress.
 
-AutoWise helps users track their vehicles — specs, license plates, maintenance history, and photos/documents — behind a single API gateway, with a vanilla-JS frontend.
+AutoWise helps users track their vehicles — specs, license plates, maintenance history, and photos/documents — behind a single API gateway. A React frontend is planned.
 
 ```
 AutoWise/
-├── Backend/     .NET 10 microservices + YARP API gateway
-└── Frontend/    Vanilla JS SPA (no build tools)
+└── Backend/     .NET 10 microservices + YARP API gateway
 ```
 
 ## Architecture
 
 ```
-Browser (Frontend/)
+Browser (frontend, planned)
   │  Bearer token (Azure AD)
   ▼
 AutoWise.YarpApiGateway  (:7080)
@@ -44,7 +43,7 @@ Messaging between Media and UserVehicles uses MassTransit + RabbitMQ with an EF 
 
 ## Frontend
 
-Plain HTML/CSS/JS, no framework or build step — `Frontend/JavaScript/`. Signs in via MSAL.js (real Azure AD redirect login), then calls the gateway directly for the vehicle list/detail views. Needs its own `config.js` (gitignored — copy `config.example.js` and fill in your App Registration values) and to be served over `http://localhost:5500` (matching the registered redirect URI and the gateway's CORS/Azure config), not opened as a local file.
+Not yet built — a React frontend is planned. The gateway's CORS policy (`Cors:AllowedOrigins`) is kept in place for it.
 
 ## Running locally
 
