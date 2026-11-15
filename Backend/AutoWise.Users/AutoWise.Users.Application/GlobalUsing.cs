@@ -1,4 +1,5 @@
-﻿global using AutoWise.CommonUtilities.Persistence.Abstractions;
+﻿global using AutoWise.CommonUtilities.Exceptions;
+global using AutoWise.CommonUtilities.Persistence.Abstractions;
 global using AutoWise.Users.Application.Data;
 global using AutoWise.Users.Application.Dtos;
 global using AutoWise.Users.Application.Extensions;

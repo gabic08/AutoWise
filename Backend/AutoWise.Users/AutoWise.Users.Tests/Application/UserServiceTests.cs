@@ -57,4 +57,38 @@ public class UserServiceTests
         syncUserResponse.ExternalId.Should().Be(ExternalId);
         syncUserResponse.Id.Should().Be(existingUser.Id);
     }
+
+    [Fact]
+    public async Task GetByIdAsync_WithExistingUser_ShouldReturnUser()
+    {
+        // Arrange
+        await using var dbContext = InMemoryUsersDbContext.Create();
+        var sut = new UserService(dbContext);
+
+        var user = User.Create(DisplayName, Email, ExternalId, Provider);
+        await dbContext.AddAsync(user);
+        await dbContext.SaveChangesAsync();
+
+        // Act
+        var response = await sut.GetByIdAsync(user.Id);
+
+        // Assert
+        response.Id.Should().Be(user.Id);
+        response.Email.Should().Be(Email);
+        response.DisplayName.Should().Be(DisplayName);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithUnknownId_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        await using var dbContext = InMemoryUsersDbContext.Create();
+        var sut = new UserService(dbContext);
+
+        // Act
+        var act = () => sut.GetByIdAsync(Guid.NewGuid());
+
+        // Assert
+        await act.Should().ThrowAsync<AutoWise.CommonUtilities.Exceptions.NotFoundException>();
+    }
 }

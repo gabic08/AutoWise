@@ -25,6 +25,16 @@ public class UserService(IUsersDbContext dbContext) : IUserService
         return NewCreateOrSyncUserResponse(newUser);
     }
 
+    public async Task<CurrentUserResponse> GetByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        var user = await dbContext.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id, ct)
+            ?? throw new NotFoundException($"User with id '{id}' was not found.");
+
+        return new CurrentUserResponse(user.Id, user.Email, user.DisplayName);
+    }
+
     private static CreateOrSyncUserResponse NewCreateOrSyncUserResponse(User user)
     {
         return new CreateOrSyncUserResponse(user.Id, user.ExternalId, user.Provider, user.Email, user.DisplayName);

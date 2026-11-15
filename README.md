@@ -18,7 +18,8 @@ Browser (frontend, planned)
 AutoWise.YarpApiGateway  (:7080)
   ├── /api/user-vehicles/**     → AutoWise.UserVehicles.API     (:7279)
   ├── /api/vehicles-catalog/**  → AutoWise.VehiclesCatalog.API  (:4040)
-  └── /api/media/**             → AutoWise.Media.API            (:7037)
+  ├── /api/media/**             → AutoWise.Media.API            (:7037)
+  └── /api/users/**             → AutoWise.Users.API            (:7126)
 
 UserVehicles ──gRPC──▶ VehiclesCatalog (VIN → specs, Redis-cached both sides)
 Media ◀──RabbitMQ (MassTransit outbox/inbox)──▶ UserVehicles  (attachment upload/removal events)
@@ -36,7 +37,7 @@ Media ◀──RabbitMQ (MassTransit outbox/inbox)──▶ UserVehicles  (attac
 | `UserVehicles` | Clean Architecture, PostgreSQL | Vehicles, events, attachments; list endpoint supports pagination/search/sort |
 | `VehiclesCatalog` | Vertical slices (Carter/MediatR), MongoDB | VIN → specs, via external VIN decoder API; exposed over HTTP + gRPC |
 | `Media` | Clean Architecture, PostgreSQL | File uploads, content-hash dedup, pluggable storage (local disk / S3 / Azure Blob) |
-| `Users` | Clean Architecture, PostgreSQL | Internal user records, resolved from external identity by the gateway (gRPC only, no public HTTP) |
+| `Users` | Clean Architecture, PostgreSQL | Internal user records, resolved from external identity by the gateway over gRPC; `GET /api/users/current-user` returns the signed-in user |
 | `CommonUtilities` | Shared libraries | Base entities, exceptions, messaging abstractions, EF interceptors — consumed as prebuilt DLLs, not project refs |
 
 Messaging between Media and UserVehicles uses MassTransit + RabbitMQ with an EF Core transactional outbox/inbox for reliable, idempotent delivery.
