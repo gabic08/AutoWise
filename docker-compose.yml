@@ -7,6 +7,11 @@ services:
             - "5432:5432"
         volumes:
             - postgres-data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
 
     mongo:
         image: mongo:7
@@ -14,20 +19,43 @@ services:
             - "27017:27017"
         volumes:
             - mongo-data:/data/db
+        healthcheck:
+            test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
 
     redis:
         image: redis:7
         ports:
             - "6379:6379"
-    
+        volumes:
+            - redis-data:/data
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 5s
+            timeout: 3s
+            retries: 10
+
     rabbitmq:
         image: rabbitmq:4-management
+        # RabbitMQ stores its data per node name, which comes from the hostname; pin it so the volume is reused.
+        hostname: rabbitmq
         environment:
             RABBITMQ_DEFAULT_USER: autowise
             RABBITMQ_DEFAULT_PASS: autowise123
         ports:
-            - "5672:5672"
-            - "15672:15672"
+            # Host port 5673 matches the services' local user secrets (amqp://...@localhost:5673/).
+            # Containers use rabbitmq:5672.
+            - "5673:5672"
+            - "15672:15672"   # management UI: http://localhost:15672
+        volumes:
+            - rabbitmq-data:/var/lib/rabbitmq
+        healthcheck:
+            test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+            interval: 10s
+            timeout: 10s
+            retries: 10
 
     keycloak:
         image: quay.io/keycloak/keycloak:26.4
@@ -61,8 +89,10 @@ services:
         volumes:
             - media-files:/data/media
         depends_on:
-            - postgres
-            - rabbitmq
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
 
     vehicles-catalog:
         build:
@@ -78,8 +108,10 @@ services:
         ports:
             - "4040:8080"
         depends_on:
-            - mongo
-            - redis
+            mongo:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
 
     user-vehicles:
         build:
@@ -95,10 +127,14 @@ services:
         ports:
             - "7279:8080"
         depends_on:
-            - postgres
-            - rabbitmq
-            - redis
-            - vehicles-catalog
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            vehicles-catalog:
+                condition: service_started
 
     users:
         build:
@@ -111,7 +147,8 @@ services:
         ports:
             - "7126:8080"
         depends_on:
-            - postgres
+            postgres:
+                condition: service_healthy
 
     gateway:
         build:
@@ -131,15 +168,23 @@ services:
         ports:
             - "7080:8080"
         depends_on:
-            - redis
-            - keycloak
-            - users
-            - user-vehicles
-            - vehicles-catalog
-            - media
+            redis:
+                condition: service_healthy
+            keycloak:
+                condition: service_started
+            users:
+                condition: service_started
+            user-vehicles:
+                condition: service_started
+            vehicles-catalog:
+                condition: service_started
+            media:
+                condition: service_started
 
 volumes:
     postgres-data:
     mongo-data:
     media-files:
     keycloak-data:
+    redis-data:
+    rabbitmq-data:

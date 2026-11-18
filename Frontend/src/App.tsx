@@ -27,7 +27,7 @@ function App() {
   // 4. Not signed in (nothing above matched)
   return (
     <div>
-      <h1>AutoWise</h1>
+      <h1 className="text-3xl font-bold text-blue-600">AutoWise</h1>
       <p>Track your vehicles in one place.</p>
       <button onClick={() => auth.signinRedirect()}>Log in</button>
     </div>

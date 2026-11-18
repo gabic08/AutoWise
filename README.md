@@ -56,7 +56,27 @@ Not yet built — a React frontend is planned. The gateway's CORS policy (`Cors:
 | Media.API | `7037` | PostgreSQL, RabbitMQ, chosen storage backend |
 | Users.API | `7126` | PostgreSQL |
 
-Each service needs its own secrets (connection strings, API keys, Azure AD values) via `dotnet user-secrets` — checked-in `appsettings.json` files leave these blank intentionally. RabbitMQ isn't containerized here; run it yourself (e.g. `docker run -d -p 5672:5672 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=... -e RABBITMQ_DEFAULT_PASS=... rabbitmq:4-management`, with a dedicated user rather than the default `guest`).
+Each service needs its own secrets (connection strings, API keys, Azure AD values) via `dotnet user-secrets` — checked-in `appsettings.json` files leave these blank intentionally.
+
+### Infrastructure in Docker
+
+`docker-compose.yml` has the infrastructure the services need:
+
+| Container | Host port | Used by |
+|---|---|---|
+| `redis` | `6379` | Gateway (user sessions), UserVehicles, VehiclesCatalog (VIN cache) |
+| `rabbitmq` | `5673` (AMQP), `15672` (management UI) | Media, UserVehicles (MassTransit) |
+| `keycloak` | `8080` | Gateway auth, frontend login |
+| `postgres` | `5432` | Media, UserVehicles, Users |
+| `mongo` | `27017` | VehiclesCatalog |
+
+When running the .NET services locally (`dotnet run` / Visual Studio), start only what you don't already run natively, e.g.:
+
+```bash
+docker compose up -d redis rabbitmq keycloak
+```
+
+RabbitMQ is published on host port **5673** (not 5672) to match the services' user secrets (`amqp://autowise:...@localhost:5673/`); containers talk to it at `rabbitmq:5672`. Redis, RabbitMQ, Postgres and Mongo have health checks, so the .NET containers wait until they're ready when you run the whole stack.
 
 ## Keycloak (local auth)
 
